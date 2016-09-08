@@ -1,0 +1,2 @@
+
+{UserSchema} = require './schemas'
