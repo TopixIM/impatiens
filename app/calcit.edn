@@ -3642,7 +3642,6 @@
                 :type :expr, :id "HkOX49LlxCSb", :by nil, :at 1500541010211
                 :data {
                  "T" {:type :leaf, :id "BJKXEcLge0rZ", :text "[]", :by "root", :at 1500541010211}
-                 "r" {:type :leaf, :id "HJs7Vc8elRHW", :text "|/lib.js", :by "root", :at 1515039103224}
                  "v" {:type :leaf, :id "BynXN5UxlRBb", :text "|/main.js", :by "root", :at 1515039105336}
                 }
                }
@@ -3931,4 +3930,8 @@
  }
  :saved-files {}
  :configs {:storage-key "calcit.edn", :extension ".cljs", :output "src", :port 6001}
+ :repl {
+  :alive? false
+  :logs {}
+ }
 }

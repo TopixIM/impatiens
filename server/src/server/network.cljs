@@ -19,23 +19,19 @@
      wss
      "connection"
      (fn [socket]
-       (let [sid (.generate shortid)]
+       (let [sid (.generate shortid)
+             on-message! (fn [rawData]
+                           (let [action (reader/read-string rawData), [op op-data] action]
+                             (on-action! op op-data sid)))
+             on-close! (fn []
+                         (.warn js/console "Client closed!")
+                         (swap! *registry dissoc sid)
+                         (on-action! :session/disconnect nil sid))]
          (on-action! :session/connect nil sid)
          (swap! *registry assoc sid socket)
          (.info js/console "New client.")
-         (.on
-          socket
-          "message"
-          (fn [rawData]
-            (let [action (reader/read-string rawData), [op op-data] action]
-              (on-action! op op-data sid))))
-         (.on
-          socket
-          "close"
-          (fn []
-            (.warn js/console "Client closed!")
-            (swap! *registry dissoc sid)
-            (on-action! :session/disconnect nil sid))))))))
+         (.on socket "message" on-message!)
+         (.on socket "close" on-close!))))))
 
 (defn sync-clients! [reel]
   (let [db (:db reel), records (:records reel)]
