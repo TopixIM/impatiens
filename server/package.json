@@ -1,11 +1,32 @@
 {
-  "name": "taro",
-  "version": "0.1.0",
-  "description": "",
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Cumulo Workflow",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "shadow-cljs compile app",
+    "build": "shadow-cljs release app",
+    "watch": "shadow-cljs watch app",
+    "repl": "rlwrap shadow-cljs clj-repl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cumulo/cumulo-workflow.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cumulo/cumulo-workflow/issues"
+  },
+  "homepage": "https://github.com/Cumulo/cumulo-workflow#readme",
+  "dependencies": {
+    "md5": "^2.2.1",
+    "shortid": "^2.2.6",
+    "uws": "^9.14.0"
+  },
+  "devDependencies": {
+    "shadow-cljs": "2.1.16",
+    "source-map-support": "^0.5.0",
+    "ws": "^4.0.0"
+  }
 }

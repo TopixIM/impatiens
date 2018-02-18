@@ -1,3 +1,0 @@
-
-{TeamSchema} = require './schemas'
-
