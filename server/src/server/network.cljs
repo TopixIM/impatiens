@@ -31,7 +31,8 @@
          (swap! *registry assoc sid socket)
          (.info js/console "New client.")
          (.on socket "message" on-message!)
-         (.on socket "close" on-close!))))))
+         (.on socket "close" on-close!)
+         (.on socket "error" (fn [e] (.error js/console e))))))))
 
 (defn sync-clients! [reel]
   (let [db (:db reel), records (:records reel)]

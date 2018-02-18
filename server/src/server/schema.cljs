@@ -3,7 +3,7 @@
 
 (def configs {:storage-key "/data/cumulo/impatiens.edn", :port 5021})
 
-(def database {:sessions {}, :users {}, :topics {}, :count 0})
+(def database {:sessions {}, :users {}, :messages {}})
 
 (def notification {:id nil, :kind nil, :text nil})
 
