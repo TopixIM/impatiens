@@ -24,8 +24,6 @@
    {:style {:cursor :pointer}, :on-click (fn [e d! m!] (d! :effect/connect nil))}
    (<> "No connection!" style-alert))))
 
-(def style-body {:padding "8px 16px"})
-
 (def style-debugger {:bottom 0, :left 0, :max-width "100%"})
 
 (defcomp
@@ -37,18 +35,15 @@
      (div
       {:style (merge ui/global ui/fullscreen ui/column)}
       (comp-header (:logged-in? store))
-      (div
-       {:style style-body}
-       (div
-        {:style (merge ui/row style-body)}
-        (if (:logged-in? store)
-          (let [router (:router store)]
-            (case (:name router)
-              :profile (comp-profile (:user store))
-              :chatroom (cursor-> :chatroom comp-chatroom states (:data router))
-              :home (cursor-> :chatroom comp-chatroom states (:data router))
-              (<> router)))
-          (comp-login states))))
-      (comp-inspect "Router" (:router store) style-debugger)
+      (if (:logged-in? store)
+        (let [router (:router store)]
+          (case (:name router)
+            :profile (comp-profile (:user store))
+            :chatroom (cursor-> :chatroom comp-chatroom states (:data router))
+            (<> router)))
+        (comp-login states))
       (comp-msg-list (get-in store [:session :notifications]) :session/remove-notification)
-      (comp-reel (:reel-length store) {})))))
+      (comment comp-reel (:reel-length store) {})
+      (comment comp-inspect "Router" (:router store) style-debugger)))))
+
+(def style-body {:padding "8px 16px"})

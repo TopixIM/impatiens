@@ -1838,7 +1838,7 @@
           :type :expr, :id "HyV5eUZgRrZ", :by nil, :at 1500541255553
           :data {
            "T" {:type :leaf, :id "SkSqx8WgCr-", :text ":storage-key", :by "root", :at 1500541255553}
-           "j" {:type :leaf, :id "Sk85xIbgRHW", :text "|/data/cumulo/impatiens.edn", :by "root", :at 1518967118893}
+           "j" {:type :leaf, :id "Sk85xIbgRHW", :text "|/data/impatiens.edn", :by "root", :at 1519055460571}
           }
          }
          "r" {
@@ -2023,7 +2023,7 @@
               :type :expr, :id "H1T2eUZeAH-", :by nil, :at 1500541255553
               :data {
                "T" {:type :leaf, :id "r1C3lUWgCHb", :text ":name", :by "root", :at 1500541255553}
-               "j" {:type :leaf, :id "HJkalLZxArW", :text ":home", :by "root", :at 1500541255553}
+               "j" {:type :leaf, :id "HJkalLZxArW", :text ":chatroom", :by "root", :at 1519117704494}
               }
              }
              "r" {
@@ -2332,31 +2332,35 @@
                        "j" {:type :leaf, :by "root", :at 1518969738242, :text "router", :id "Sybq7QPvf"}
                        "r" {:type :leaf, :by "root", :at 1518969740377, :text ":data", :id "B17MqXmDPf"}
                        "v" {
-                        :type :expr, :by "root", :at 1518969740789, :id "S1erqm7DDz"
+                        :type :expr, :by "root", :at 1519117779494, :id "HJQlwvFwM"
                         :data {
-                         "T" {:type :leaf, :by "root", :at 1518969744345, :text ":messages", :id "rkS9QQDvG"}
-                         "j" {:type :leaf, :by "root", :at 1518969745872, :text "db", :id "ry557QPvM"}
-                        }
-                       }
-                      }
-                     }
-                    }
-                   }
-                   "n" {
-                    :type :expr, :by "root", :at 1518969709126, :id "SyzsQmwPf"
-                    :data {
-                     "T" {:type :leaf, :by "root", :at 1518969756076, :text ":home", :id "HkeSO7mPPMleaf"}
-                     "j" {
-                      :type :expr, :by "root", :at 1518969734372, :id "BJxRtmmwDM"
-                      :data {
-                       "T" {:type :leaf, :by "root", :at 1518969736122, :text "assoc", :id "H1AYX7wPG"}
-                       "j" {:type :leaf, :by "root", :at 1518969738242, :text "router", :id "Sybq7QPvf"}
-                       "r" {:type :leaf, :by "root", :at 1518969740377, :text ":data", :id "B17MqXmDPf"}
-                       "v" {
-                        :type :expr, :by "root", :at 1518969740789, :id "S1erqm7DDz"
-                        :data {
-                         "T" {:type :leaf, :by "root", :at 1518969744345, :text ":messages", :id "rkS9QQDvG"}
-                         "j" {:type :leaf, :by "root", :at 1518969745872, :text "db", :id "ry557QPvM"}
+                         "D" {:type :leaf, :by "root", :at 1519117780469, :text "{}", :id "B1nRSwYwM"}
+                         "L" {
+                          :type :expr, :by "root", :at 1519117781318, :id "rygaCSDFwG"
+                          :data {
+                           "T" {:type :leaf, :by "root", :at 1519117782673, :text ":users", :id "ry6RBwFwz"}
+                           "j" {
+                            :type :expr, :by "root", :at 1519117784588, :id "ByZJLwKDf"
+                            :data {
+                             "T" {:type :leaf, :by "root", :at 1519117788297, :text ":users", :id "rJgkIwKvf"}
+                             "j" {:type :leaf, :by "root", :at 1519117789045, :text "db", :id "SyHkUDYPM"}
+                            }
+                           }
+                          }
+                         }
+                         "T" {
+                          :type :expr, :by "root", :at 1519117791030, :id "BylvJIwtPG"
+                          :data {
+                           "D" {:type :leaf, :by "root", :at 1519117793265, :text ":messages", :id "B1ZDyIPYDG"}
+                           "T" {
+                            :type :expr, :by "root", :at 1518969740789, :id "S1erqm7DDz"
+                            :data {
+                             "T" {:type :leaf, :by "root", :at 1518969744345, :text ":messages", :id "rkS9QQDvG"}
+                             "j" {:type :leaf, :by "root", :at 1518969745872, :text "db", :id "ry557QPvM"}
+                            }
+                           }
+                          }
+                         }
                         }
                        }
                       }

@@ -6,7 +6,7 @@
             [cljs.reader :refer [read-string]]))
 
 (def base-info
-  {:title "Cumulo",
+  {:title "Impatiens",
    :icon "http://cdn.tiye.me/logo/cumulo.png",
    :ssr nil,
    :inline-styles [(slurp "entry/main.css")]})
@@ -14,7 +14,9 @@
 (defn dev-page []
   (make-page
    ""
-   (merge base-info {:styles ["http://localhost:8100/main.css"], :scripts ["/main.js"]})))
+   (merge
+    base-info
+    {:styles ["http://cdn.tiye.me/favored-fonts/main.css"], :scripts ["/main.js"]})))
 
 (def preview? (= "preview" js/process.env.prod))
 

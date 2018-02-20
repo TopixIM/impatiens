@@ -14,7 +14,6 @@
       {:user (twig-user (get-in db [:users (:user-id session)])),
        :router (case (:name router)
          :profile router
-         :chatroom (assoc router :data (:messages db))
-         :home (assoc router :data (:messages db))
+         :chatroom (assoc router :data {:users (:users db), :messages (:messages db)})
          router)}
       nil))))

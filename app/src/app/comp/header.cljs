@@ -5,19 +5,17 @@
             [respo-ui.colors :as colors]
             [respo.macros :refer [defcomp <> span div]]))
 
-(defn on-home [e dispatch!]
-  (dispatch! :router/change {:name :home, :data nil, :router nil}))
+(defn on-home [e dispatch!] (dispatch! :router/change {:name :chatroom, :data nil}))
 
-(defn on-profile [e dispatch!]
-  (dispatch! :router/change {:name :profile, :data nil, :router nil}))
+(defn on-profile [e dispatch!] (dispatch! :router/change {:name :profile, :data nil}))
 
 (def style-header
   {:height 48,
-   :background-color colors/motif,
    :justify-content :space-between,
    :padding "0 16px",
    :font-size 16,
-   :color :white})
+   :flex-shrink 0,
+   :border-bottom (str "1px solid " (hsl 0 0 0 0.1))})
 
 (def style-logo {:cursor :pointer})
 
