@@ -3,7 +3,7 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo-ui.colors :as colors]
-            [respo.macros :refer [defcomp <> cursor-> div span button]]
+            [respo.macros :refer [defcomp <> cursor-> div span button title]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo.comp.space :refer [=<]]
             [app.comp.header :refer [comp-header]]
@@ -33,7 +33,7 @@
    (if (nil? store)
      (comp-offline)
      (div
-      {:style (merge ui/global ui/fullscreen ui/column)}
+      {:style (merge ui/global ui/fullscreen ui/center {:background-color (hsl 0 0 94)})}
       (comp-header (:logged-in? store))
       (if (:logged-in? store)
         (let [router (:router store)]
@@ -43,6 +43,7 @@
             (<> router)))
         (comp-login states))
       (comp-msg-list (get-in store [:session :notifications]) :session/remove-notification)
+      (title {:inner-text "Title2"})
       (comment comp-reel (:reel-length store) {})
       (comment comp-inspect "Router" (:router store) style-debugger)))))
 

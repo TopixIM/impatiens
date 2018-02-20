@@ -40,7 +40,13 @@
 (def mount-target (.querySelector js/document ".app"))
 
 (defn render-app! [renderer]
-  (renderer mount-target (comp-container @*states @*store) dispatch!))
+  (renderer mount-target (comp-container @*states @*store) dispatch!)
+  (let [router (:router @*store), data (:data router)]
+    (set!
+     js/document.title
+     (if (= :chatroom (:name router))
+       (str (count (:messages data)) "/" (count (:users data)) " Impatiens")
+       "Impatiens"))))
 
 (def ssr? (some? (.querySelector js/document "meta.respo-ssr")))
 

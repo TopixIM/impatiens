@@ -7,7 +7,8 @@
             [respo.comp.space :refer [=<]]
             [respo.util.list :refer [map-val]]
             ["luxon" :refer [DateTime]]
-            [keycode.core :as keycode]))
+            [keycode.core :as keycode]
+            [app.style :as style]))
 
 (defcomp
  comp-message
@@ -21,7 +22,7 @@
   (<> (:text message))
   (=< 8 nil)
   (<>
-   (.toFormat (.fromMillis DateTime (:time message)) "mm:ss")
+   (.toFormat (.fromMillis DateTime (:time message)) "HH:mm")
    {:color (hsl 0 0 80), :font-family ui/font-code, :font-size 12})))
 
 (defcomp
@@ -31,22 +32,40 @@
        message-dict (:messages router-data)
        user-dict (:users router-data)]
    (div
-    {:style (merge ui/flex ui/column {:padding 16})}
-    (div
-     {:style (merge ui/flex {:overflow :auto, :padding-bottom 160})}
-     (list->
-      {:style {}}
-      (->> message-dict
-           (sort-by (fn [[k message]] (:time message)))
-           (map-val
-            (fn [message] (comp-message message (get user-dict (:user-id message)))))))
-     (div
-      {:style ui/row-parted}
-      (span {})
-      (span
-       {:style {:color (hsl 100 80 35), :font-family ui/font-fancy, :cursor :pointer},
-        :inner-text "Clear",
-        :on-click (action-> :message/clear nil)})))
+    {:style (merge
+             ui/flex
+             ui/column
+             {:padding 16,
+              :width 720,
+              :border (str "1px solid " (hsl 0 0 96)),
+              :border-width "0 1px 0 1px",
+              :background-color :white})}
+    (if (empty? message-dict)
+      (<>
+       "No messages yet..."
+       {:font-family ui/font-fancy,
+        :font-weight 300,
+        :font-size 32,
+        :color (hsl 0 0 60),
+        :margin-bottom 8})
+      (div
+       {:style (merge ui/flex {:overflow :auto, :padding-bottom 160})}
+       (list->
+        {:style {}}
+        (->> message-dict
+             (sort-by (fn [[k message]] (:time message)))
+             (map-val
+              (fn [message] (comp-message message (get user-dict (:user-id message)))))))
+       (div
+        {:style ui/row-parted}
+        (span {})
+        (span
+         {:style {:color (hsl 100 80 35),
+                  :font-family ui/font-fancy,
+                  :cursor :pointer,
+                  :font-size 12},
+          :inner-text "阅后即焚",
+          :on-click (action-> :message/clear nil)}))))
     (div
      {:style ui/row}
      (input
@@ -59,7 +78,7 @@
            (do (d! :message/send (:draft state)) (m! (assoc state :draft "")))))})
      (=< 8 nil)
      (button
-      {:style ui/button,
+      {:style style/button,
        :on-click (fn [e d! m!]
          (do (d! :message/send (:draft state)) (m! (assoc state :draft ""))))}
       (<> "Send"))))))

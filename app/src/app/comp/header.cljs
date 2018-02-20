@@ -10,12 +10,15 @@
 (defn on-profile [e dispatch!] (dispatch! :router/change {:name :profile, :data nil}))
 
 (def style-header
-  {:height 48,
+  {:height 28,
    :justify-content :space-between,
    :padding "0 16px",
-   :font-size 16,
+   :font-size 14,
    :flex-shrink 0,
-   :border-bottom (str "1px solid " (hsl 0 0 0 0.1))})
+   :border-bottom (str "1px solid " (hsl 0 0 0 0.1)),
+   :width "100%",
+   :background-color :white,
+   :font-family ui/font-fancy})
 
 (def style-logo {:cursor :pointer})
 
