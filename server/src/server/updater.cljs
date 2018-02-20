@@ -15,5 +15,6 @@
             :session/remove-notification session/remove-notification
             :router/change router/change
             :message/send message/send
+            :message/clear message/clear
             (do (println "Unknown op:" op) identity))]
     (f db op-data sid op-id op-time)))
