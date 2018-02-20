@@ -15,5 +15,6 @@
        :router (case (:name router)
          :profile router
          :chatroom (assoc router :data {:users (:users db), :messages (:messages db)})
-         router)}
+         router),
+       :count-sessions (count (:sessions db))}
       nil))))

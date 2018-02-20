@@ -29,7 +29,7 @@
 (defcomp
  comp-container
  (states store)
- (let [state (:data states), session (:session store)]
+ (let [state (:data states), session (:session store), user-id (get-in store [:user :id])]
    (if (nil? store)
      (comp-offline)
      (div
@@ -39,12 +39,12 @@
         (let [router (:router store)]
           (case (:name router)
             :profile (comp-profile (:user store))
-            :chatroom (cursor-> :chatroom comp-chatroom states (:data router))
+            :chatroom (cursor-> :chatroom comp-chatroom states (:data router) user-id)
             (<> router)))
         (comp-login states))
       (comp-msg-list (get-in store [:session :notifications]) :session/remove-notification)
       (title {:inner-text "Title2"})
       (comment comp-reel (:reel-length store) {})
-      (comment comp-inspect "Router" (:router store) style-debugger)))))
+      (comment comp-inspect "Router" (:user store) style-debugger)))))
 
 (def style-body {:padding "8px 16px"})

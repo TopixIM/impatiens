@@ -12,9 +12,9 @@
 
 (defcomp
  comp-message
- (message user)
+ (message user mine?)
  (div
-  {:style ui/row}
+  {:style (merge ui/row (if mine? {:color (hsl 0 0 70)}))}
   (div
    {:style {:width 80, :white-space :nowrap, :overflow :hidden, :text-overflow :ellipsis}}
    (<> (:name user)))
@@ -27,7 +27,7 @@
 
 (defcomp
  comp-chatroom
- (states router-data)
+ (states router-data user-id)
  (let [state (or (:data states) {:draft ""})
        message-dict (:messages router-data)
        user-dict (:users router-data)]
@@ -55,7 +55,9 @@
         (->> message-dict
              (sort-by (fn [[k message]] (:time message)))
              (map-val
-              (fn [message] (comp-message message (get user-dict (:user-id message)))))))
+              (fn [message]
+                (let [author-id (:user-id message)]
+                  (comp-message message (get user-dict author-id) (= user-id author-id)))))))
        (div
         {:style ui/row-parted}
         (span {})
