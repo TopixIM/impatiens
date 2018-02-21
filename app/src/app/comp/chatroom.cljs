@@ -8,22 +8,71 @@
             [respo.util.list :refer [map-val]]
             ["luxon" :refer [DateTime]]
             [keycode.core :as keycode]
-            [app.style :as style]))
+            [app.style :as style]
+            [verbosely.core :refer [log!]]))
+
+(def chunk-clear-tool
+  (div
+   {:style ui/row-parted}
+   (span {})
+   (span
+    {:style {:color (hsl 100 80 35),
+             :font-family ui/font-fancy,
+             :cursor :pointer,
+             :font-size 12},
+     :inner-text "阅后即焚",
+     :on-click (action-> :message/clear nil)})))
+
+(def chunk-no-message
+  (<>
+   "No messages yet..."
+   {:font-family ui/font-fancy,
+    :font-weight 300,
+    :font-size 32,
+    :color (hsl 0 0 60),
+    :margin-bottom 8}))
 
 (defcomp
  comp-message
- (message user mine?)
+ (message user mine? followed?)
  (div
   {:style (merge ui/row (if mine? {:color (hsl 0 0 70)}))}
   (div
-   {:style {:width 80, :white-space :nowrap, :overflow :hidden, :text-overflow :ellipsis}}
-   (<> (:name user)))
+   {:style {:width 80,
+            :white-space :nowrap,
+            :overflow :hidden,
+            :text-overflow :ellipsis,
+            :flex-shrink 0}}
+   (if (not followed?) (<> (:name user))))
   (=< 8 nil)
   (<> (:text message))
   (=< 8 nil)
   (<>
    (.toFormat (.fromMillis DateTime (:time message)) "HH:mm")
-   {:color (hsl 0 0 80), :font-family ui/font-code, :font-size 12})))
+   {:color (hsl 0 0 80), :font-size 12, :vertical-align :middle})))
+
+(defcomp
+ comp-message-list
+ (message-dict user-dict user-id)
+ (div
+  {:style (merge ui/flex {:overflow :auto, :padding-bottom 160})}
+  (list->
+   {:style {}}
+   (loop [acc []
+          last-author-id nil
+          sorted-messages (->> message-dict (sort-by (fn [[k message]] (:time message))))]
+     (if (empty? sorted-messages)
+       (seq acc)
+       (let [[k message] (first sorted-messages)
+             author-id (:user-id message)
+             mine? (= user-id author-id)
+             followed? (= last-author-id author-id)]
+         (println last-author-id author-id)
+         (recur
+          (conj acc [k (comp-message message (get user-dict author-id) mine? followed?)])
+          author-id
+          (rest sorted-messages))))))
+  chunk-clear-tool))
 
 (defcomp
  comp-chatroom
@@ -41,33 +90,8 @@
               :border-width "0 1px 0 1px",
               :background-color :white})}
     (if (empty? message-dict)
-      (<>
-       "No messages yet..."
-       {:font-family ui/font-fancy,
-        :font-weight 300,
-        :font-size 32,
-        :color (hsl 0 0 60),
-        :margin-bottom 8})
-      (div
-       {:style (merge ui/flex {:overflow :auto, :padding-bottom 160})}
-       (list->
-        {:style {}}
-        (->> message-dict
-             (sort-by (fn [[k message]] (:time message)))
-             (map-val
-              (fn [message]
-                (let [author-id (:user-id message)]
-                  (comp-message message (get user-dict author-id) (= user-id author-id)))))))
-       (div
-        {:style ui/row-parted}
-        (span {})
-        (span
-         {:style {:color (hsl 100 80 35),
-                  :font-family ui/font-fancy,
-                  :cursor :pointer,
-                  :font-size 12},
-          :inner-text "阅后即焚",
-          :on-click (action-> :message/clear nil)}))))
+      chunk-no-message
+      (comp-message-list message-dict user-dict user-id))
     (div
      {:style ui/row}
      (input
