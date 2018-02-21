@@ -38,12 +38,13 @@
  (div
   {:style (merge ui/row {:align-items :center} (if mine? {:color (hsl 0 0 70)}))}
   (div
-   {:style {:width 80,
+   {:style {:width 72,
             :white-space :nowrap,
             :overflow :hidden,
             :text-overflow :ellipsis,
-            :flex-shrink 0}}
-   (if (not followed?) (<> (:name user))))
+            :flex-shrink 0,
+            :text-align :right}}
+   (if (not followed?) (<> (str (:name user) ":"))))
   (=< 8 nil)
   (<> (:text message) ui/flex)
   (=< 8 nil)
@@ -67,7 +68,6 @@
              author-id (:user-id message)
              mine? (= user-id author-id)
              followed? (= last-author-id author-id)]
-         (println last-author-id author-id)
          (recur
           (conj acc [k (comp-message message (get user-dict author-id) mine? followed?)])
           author-id
