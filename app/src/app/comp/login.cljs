@@ -20,7 +20,7 @@
  (states)
  (let [state (or (:data states) initial-state)]
    (div
-    {}
+    {:style (merge ui/flex ui/center)}
     (div
      {:style {}}
      (div
@@ -40,7 +40,7 @@
         :on-input (on-input state :password)})))
     (=< nil 8)
     (div
-     {:style ui/flex}
+     {:style {}}
      (button
       {:inner-text "Sign up",
        :style (merge ui/button {:outline :none, :border :none}),

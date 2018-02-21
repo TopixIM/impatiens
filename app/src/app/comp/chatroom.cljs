@@ -36,7 +36,7 @@
  comp-message
  (message user mine? followed?)
  (div
-  {:style (merge ui/row (if mine? {:color (hsl 0 0 70)}))}
+  {:style (merge ui/row {:align-items :center} (if mine? {:color (hsl 0 0 70)}))}
   (div
    {:style {:width 80,
             :white-space :nowrap,
@@ -45,11 +45,11 @@
             :flex-shrink 0}}
    (if (not followed?) (<> (:name user))))
   (=< 8 nil)
-  (<> (:text message))
+  (<> (:text message) ui/flex)
   (=< 8 nil)
   (<>
    (.toFormat (.fromMillis DateTime (:time message)) "HH:mm")
-   {:color (hsl 0 0 80), :font-size 12, :vertical-align :middle})))
+   {:color (hsl 0 0 80), :font-size 10, :vertical-align :middle})))
 
 (defcomp
  comp-message-list
