@@ -1,7 +1,7 @@
 
 (ns server.schema )
 
-(def configs {:storage-key "/data/impatiens.edn", :port 5021})
+(def configs {:storage-key "/data/TopixIM/impatiens.edn", :port 11001})
 
 (def database {:sessions {}, :users {}, :messages {}})
 
