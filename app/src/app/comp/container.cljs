@@ -11,7 +11,8 @@
             [app.comp.login :refer [comp-login]]
             [respo-message.comp.msg-list :refer [comp-msg-list]]
             [app.comp.reel :refer [comp-reel]]
-            [app.comp.chatroom :refer [comp-chatroom]]))
+            [app.comp.chatroom :refer [comp-chatroom]]
+            [app.schema :refer [dev?]]))
 
 (def style-alert {:font-family "Josefin Sans", :font-weight 100, :font-size 40})
 
@@ -44,7 +45,7 @@
         (comp-login states))
       (comp-msg-list (get-in store [:session :notifications]) :session/remove-notification)
       (title {:inner-text "Title2"})
-      (comment comp-reel (:reel-length store) {})
-      (comment comp-inspect "Router" (:user store) style-debugger)))))
+      (if dev? (comp-reel (:reel-length store) {}))
+      (if dev? (comp-inspect "Router" (:user store) style-debugger))))))
 
 (def style-body {:padding "8px 16px"})

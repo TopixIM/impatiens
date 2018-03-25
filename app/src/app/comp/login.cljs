@@ -4,7 +4,9 @@
             [respo.comp.space :refer [=<]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo-ui.core :as ui]
-            [app.schema :as schema]))
+            [app.schema :as schema]
+            [respo-md.comp.md :refer [comp-md-block]]
+            [app.style :as style]))
 
 (def initial-state {:username "", :password ""})
 
@@ -22,6 +24,12 @@
    (div
     {:style (merge ui/flex ui/center)}
     (div
+     {:style {:font-size 40,
+              :margin-bottom 20,
+              :font-weight 100,
+              :font-family ui/font-fancy}}
+     (comp-md-block "Impatiens is a tiny chatroom." {}))
+    (div
      {:style {}}
      (div
       {}
@@ -29,24 +37,16 @@
        {:placeholder "Username",
         :value (:username state),
         :style ui/input,
-        :on-input (on-input state :username)}))
-     (=< nil 8)
-     (div
-      {}
-      (input
-       {:placeholder "Password",
-        :value (:password state),
-        :style ui/input,
-        :on-input (on-input state :password)})))
+        :on-input (on-input state :username)})))
     (=< nil 8)
     (div
      {:style {}}
      (button
       {:inner-text "Sign up",
-       :style (merge ui/button {:outline :none, :border :none}),
+       :style (merge style/button),
        :on-click (on-submit (:username state) (:password state) true)})
      (=< 8 nil)
      (button
       {:inner-text "Sign in",
-       :style (merge ui/button {:outline :none, :border :none}),
+       :style (merge style/button),
        :on-click (on-submit (:username state) (:password state) false)})))))
