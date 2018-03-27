@@ -49,7 +49,10 @@
   (<> (:text message) ui/flex)
   (=< 8 nil)
   (<>
-   (.toFormat (.fromMillis DateTime (:time message)) "HH:mm")
+   (let [date-time (.fromMillis DateTime (:time message))]
+     (if (.. DateTime (local) (hasSame date-time "day"))
+       (.toFormat date-time "HH:mm")
+       (.toFormat date-time "MM-dd HH:mm")))
    {:color (hsl 0 0 80), :font-size 10, :vertical-align :middle})))
 
 (defcomp
