@@ -1,7 +1,10 @@
 
-(ns server.schema )
+(ns app.schema )
 
-(def configs {:storage-key "/data/TopixIM/impatiens.edn", :port 11001})
+(def configs
+  {:storage-key "/data/TopixIM/impatiens.edn",
+   :local-storage-key "workflow-storage",
+   :port 11001})
 
 (def database {:sessions {}, :users {}, :messages {}})
 

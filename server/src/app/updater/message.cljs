@@ -1,5 +1,5 @@
 
-(ns server.updater.message )
+(ns app.updater.message )
 
 (defn clear [db op-data sid op-id op-time] (assoc db :messages {}))
 
