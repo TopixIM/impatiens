@@ -1,10 +1,10 @@
 {
-  "name": "cumulo-workflow",
+  "name": "impatiens",
   "version": "0.1.0",
-  "description": "Cumulo Workflow",
+  "description": "A tiny chatroom",
   "main": "index.js",
   "scripts": {
-    "watch": "shadow-cljs watch browser",
+    "watch": "shadow-cljs watch client server",
     "serve": "http-server dist -s",
     "repl": "rlwrap shadow-cljs clj-repl"
   },
@@ -16,9 +16,13 @@
   "license": "MIT",
   "devDependencies": {
     "http-server": "^0.11.1",
-    "shadow-cljs": "^2.2.20"
+    "shadow-cljs": "^2.2.30",
+    "source-map-support": "^0.5.4",
+    "ws": "^5.1.0"
   },
   "dependencies": {
-    "luxon": "^1.0.0"
+    "luxon": "^1.0.0",
+    "md5": "^2.2.1",
+    "shortid": "^2.2.6"
   }
 }
