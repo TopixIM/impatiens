@@ -3,13 +3,11 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo-ui.colors :as colors]
-            [respo.macros :refer [defcomp list-> action-> <> span div input button]]
+            [respo.core :refer [defcomp list-> action-> <> span div input button]]
             [respo.comp.space :refer [=<]]
             [respo.util.list :refer [map-val]]
             ["luxon" :refer [DateTime]]
-            [keycode.core :as keycode]
-            [app.style :as style]
-            [verbosely.core :refer [log!]]))
+            [app.style :as style]))
 
 (def chunk-clear-tool
   (div
@@ -103,7 +101,7 @@
        :value (:draft state),
        :on-input (fn [e d! m!] (m! (assoc state :draft (:value e)))),
        :on-keydown (fn [e d! m!]
-         (if (= keycode/return (:keycode e))
+         (if (= 13 (:keycode e))
            (do (d! :message/send (:draft state)) (m! (assoc state :draft "")))))})
      (=< 8 nil)
      (button

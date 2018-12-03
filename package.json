@@ -5,8 +5,15 @@
   "main": "index.js",
   "scripts": {
     "watch": "shadow-cljs watch client server",
+    "build": "shadow-cljs clj-run build.main/build",
+    "build-local": "shadow-cljs clj-run build.main/build-local",
+    "page": "shadow-cljs clj-run build.main/page",
+    "upload": "lumo -c cli/:src/ -m build.upload",
     "serve": "http-server dist -s",
-    "repl": "rlwrap shadow-cljs clj-repl"
+    "repl": "rlwrap shadow-cljs clj-repl client",
+    "repl-server": "rlwrap shadow-cljs clj-repl server",
+    "ln": "cd target && rm -f entry && ln -s ../entry",
+    "prod": "yarn install --production"
   },
   "repository": {
     "type": "git",
@@ -15,14 +22,16 @@
   "author": "jiyinyiyong",
   "license": "MIT",
   "devDependencies": {
-    "http-server": "^0.11.1",
-    "shadow-cljs": "^2.2.30",
-    "source-map-support": "^0.5.4",
-    "ws": "^5.1.0"
+    "feather-icons": "^4.9.0",
+    "luxon": "^1.8.2",
+    "md5": "^2.2.1",
+    "randomcolor": "^0.5.3",
+    "shortid": "^2.2.14",
+    "ws": "^6.1.0"
   },
   "dependencies": {
-    "luxon": "^1.0.0",
-    "md5": "^2.2.1",
-    "shortid": "^2.2.6"
+    "http-server": "^0.11.1",
+    "shadow-cljs": "^2.7.6",
+    "source-map-support": "^0.5.9"
   }
 }

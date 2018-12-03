@@ -3,14 +3,14 @@
   (:require [hsl.core :refer [hsl]]
             [respo-ui.core :as ui]
             [respo-ui.colors :as colors]
-            [respo.macros :refer [defcomp <> cursor-> div span button title]]
+            [respo.core :refer [defcomp <> cursor-> div span button title]]
             [respo.comp.inspect :refer [comp-inspect]]
             [respo.comp.space :refer [=<]]
             [app.comp.header :refer [comp-header]]
             [app.comp.profile :refer [comp-profile]]
             [app.comp.login :refer [comp-login]]
-            [respo-message.comp.msg-list :refer [comp-msg-list]]
-            [app.comp.reel :refer [comp-reel]]
+            [respo-message.comp.messages :refer [comp-messages]]
+            [cumulo-reel.comp.reel :refer [comp-reel]]
             [app.comp.chatroom :refer [comp-chatroom]]
             [app.schema :refer [dev?]]))
 
@@ -43,7 +43,10 @@
             :chatroom (cursor-> :chatroom comp-chatroom states (:data router) user-id)
             (<> router)))
         (comp-login states))
-      (comp-msg-list (get-in store [:session :notifications]) :session/remove-notification)
+      (comp-messages
+       (get-in store [:session :messages])
+       {}
+       (fn [info d! m!] (d! :session/remove-message info)))
       (title {:inner-text "Title2"})
       (if dev? (comp-reel (:reel-length store) {}))
       (if dev? (comp-inspect "Router" (:user store) style-debugger))))))
