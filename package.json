@@ -4,16 +4,14 @@
   "description": "A tiny chatroom",
   "main": "index.js",
   "scripts": {
-    "watch": "shadow-cljs watch client server",
-    "build": "shadow-cljs clj-run build.main/build",
-    "build-local": "shadow-cljs clj-run build.main/build-local",
-    "page": "shadow-cljs clj-run build.main/page",
-    "upload": "lumo -c cli/:src/ -m build.upload",
-    "serve": "http-server dist -s",
-    "repl": "rlwrap shadow-cljs clj-repl client",
-    "repl-server": "rlwrap shadow-cljs clj-repl server",
-    "ln": "cd target && rm -f entry && ln -s ../entry",
-    "prod": "yarn install --production"
+    "watch-server": "cr --emit-js",
+    "build-server": "yarn webpack && node js-out/bundle.js",
+    "dev-server": "hot=true webpack --watch",
+    "compile-server": "cr --emit-js --once",
+    "compile-page": "cr --emit-js --once --init-fn app.client/main! --reload-fn app.client/reload! --emit-path out-page",
+    "release-page": "vite build --base=./",
+    "release-server": "webpack",
+    "watch-page": "cr --emit-js --emit-path out-page/ --init-fn app.client/main! --reload-fn app.client/reload!"
   },
   "repository": {
     "type": "git",
@@ -23,15 +21,18 @@
   "license": "MIT",
   "devDependencies": {
     "feather-icons": "^4.9.0",
-    "luxon": "^1.8.2",
-    "md5": "^2.2.1",
-    "randomcolor": "^0.5.3",
-    "shortid": "^2.2.14",
-    "ws": "^7.4.6"
+    "bottom-tip": "^0.1.2",
+    "md5": "^2.3.0",
+    "randomcolor": "^0.6.2",
+    "shortid": "^2.2.16",
+    "url-parse": "^1.5.3",
+    "vite": "^2.5.0",
+    "webpack": "^5.50.0",
+    "webpack-cli": "^4.8.0",
+    "ws": "^8.1.0",
+    "luxon": "^1.8.2"
   },
   "dependencies": {
-    "http-server": "^0.11.1",
-    "shadow-cljs": "^2.7.6",
-    "source-map-support": "^0.5.9"
+    "@calcit/procs": "^0.4.16"
   }
 }
