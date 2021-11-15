@@ -1,9 +1,8 @@
 
 {}
-  :configs $ {} (:reload-fn |app.server/reload!) (:port 6001) (:output |src) (:storage-key |calcit.cirru)
-    :modules $ [] |respo.calcit/ |lilac/ |recollect/ |memof/ |respo-ui.calcit/ |ws-edn.calcit/ |cumulo-util.calcit/ |respo-message.calcit/ |cumulo-reel.calcit/ |respo-markdown.calcit/
-    :init-fn |app.server/main!
-    :extension |.cljs
+  :users $ {}
+    |B1y7Rc-Zz $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |B1y7Rc-Zz) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
   :ir $ {} (:package |app)
     :root $ {} (:def |main!) (:ns |main)
     :files $ {}
@@ -1681,245 +1680,262 @@
           :id |B1Swe8bxAr-
       |app.server $ {}
         :defs $ {}
-          |*initial-db $ {}
+          |*initial-db $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
             :data $ {}
-              |T $ {} (:text |defatom) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |j $ {} (:text |*initial-db) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |r $ {}
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |defatom)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |*initial-db)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
                 :data $ {}
-                  |T $ {} (:text |merge-local-edn!) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |j $ {} (:text |schema/database) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |r $ {} (:text |storage-file) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |if)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |path-exists?)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |found?)
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |w-log)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |storage-file)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |do)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |if)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |found?)
-                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |println)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text "|\"Found local EDN data")
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |merge)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |schema/database)
+                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"Found local EDN data")
-                          |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"Found no data")
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-            :type :expr
-            :at 1629224139585
-            :by |B1y7Rc-Zz
-          |persist-db! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |parse-cirru-edn)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |read-file)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |storage-file)
+                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |do)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981417867)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |println)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text "|\"Found no data")
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981417867) (:text |schema/database)
+          |persist-db! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defn)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |persist-db!)
-              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |persist-db!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                 :data $ {}
-              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |let)
-                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |let)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                     :data $ {}
-                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |file-content)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |file-content)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |format-cirru-edn)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |format-cirru-edn)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |assoc)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |assoc)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:db)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reel)
-                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:sessions)
-                                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |:db)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |@*reel)
+                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |:sessions)
+                                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |{})
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |{})
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |storage-path)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |storage-file)
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |storage-path)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |storage-file)
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |backup-path)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |backup-path)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |get-backup-path!)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |get-backup-path!)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |write-mildly!)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |storage-path)
-                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |file-content)
-                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |check-write-file!)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |storage-path)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |file-content)
+                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981493136)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |write-mildly!)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |backup-path)
-                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |file-content)
-          |sync-clients! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |check-write-file!)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |backup-path)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981493136) (:text |file-content)
+          |sync-clients! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981815252)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defn)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sync-clients!)
-              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981815252) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981815252) (:text |sync-clients!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981815252)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reel)
-              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981815252) (:text |reel)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981815252)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |wss-each!)
-                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981815252) (:text |wss-each!)
+                  |f $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |fn)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |socket)
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |sid)
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |let)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |let)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                             :data $ {}
-                              |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |db)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |db)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:db)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reel)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:db)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |reel)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |records)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |records)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:records)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reel)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:records)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |reel)
+                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |session)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |session)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |get-in)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |db)
-                                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |get-in)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |db)
+                                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                         :data $ {}
-                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |[])
-                                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:sessions)
-                                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |[])
+                                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:sessions)
+                                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |sid)
+                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |old-store)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |old-store)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |or)
-                                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |or)
+                                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                         :data $ {}
-                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |get)
-                                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*client-caches)
-                                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |nil)
-                              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |get)
+                                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |@*client-caches)
+                                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |sid)
+                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |nil)
+                              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |new-store)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |new-store)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |twig-container)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |db)
-                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |session)
-                                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |records)
-                              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |twig-container)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |db)
+                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |session)
+                                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |records)
+                              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |changes)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |changes)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |diff-twig)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |old-store)
-                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |new-store)
-                                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |diff-twig)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |old-store)
+                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |new-store)
+                                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                         :data $ {}
-                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |{})
-                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |{})
+                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                             :data $ {}
-                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:key)
-                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:id)
-                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:key)
+                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:id)
+                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |when)
-                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |config/dev?)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |;)
+                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |when)
+                              |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |config/dev?)
+                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"Changes for")
-                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                  |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\":")
-                                  |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |changes)
-                                  |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |println)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text "|\"Changes for")
+                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |sid)
+                                  |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text "|\":")
+                                  |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |changes)
+                                  |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |count)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |records)
-                          |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |count)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |records)
+                          |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |if)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |if)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |not=)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |changes)
-                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |not=)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |changes)
+                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |[])
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |[])
+                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |do)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |do)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |wss-send!)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |wss-send!)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |sid)
+                                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                         :data $ {}
-                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |{})
-                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |format-cirru-edn)
+                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                             :data $ {}
-                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:kind)
-                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:patch)
-                                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                            :data $ {}
-                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:data)
-                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |changes)
-                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |{})
+                                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
+                                                :data $ {}
+                                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:kind)
+                                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:patch)
+                                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
+                                                :data $ {}
+                                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |:data)
+                                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |changes)
+                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982017992)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |swap!)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*client-caches)
-                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |assoc)
-                                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                      |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |new-store)
-              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |swap!)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |*client-caches)
+                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |assoc)
+                                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |sid)
+                                      |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982017992) (:text |new-store)
+              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636982022604)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |new-twig-loop!)
-          |storage-file $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636982022604) (:text |new-twig-loop!)
+          |storage-file $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
             :data $ {}
-              |T $ {} (:text |def) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |j $ {} (:text |storage-file) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |r $ {}
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |def)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |storage-file)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
                 :data $ {}
-                  |T $ {} (:text |path/join) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |j $ {} (:text |js/__dirname) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |r $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |if)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:storage-file)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |config/site)
-                    :type :expr
-                    :at 1629224139585
-                    :by |B1y7Rc-Zz
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-            :type :expr
-            :at 1629224139585
-            :by |B1y7Rc-Zz
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |empty?)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |calcit-dirname)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |str)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |calcit-dirname)
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |:storage-file)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |config/site)
+                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |str)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |calcit-dirname)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text "|\"/")
+                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981547148)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |:storage-file)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981547148) (:text |config/site)
           |*reader-reel $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
             :data $ {}
               |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defatom)
@@ -1944,367 +1960,376 @@
                         :data $ {}
                           |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:db)
                           |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*initial-db)
-          |*proxied-dispatch! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+          |main! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defatom)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*proxied-dispatch!)
-              |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |dispatch!)
-          |main! $ {}
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |main!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |println)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text "|\"Running mode:")
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |if)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |config/dev?)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text "|\"dev")
+                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text "|\"release")
+              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |let)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |p?)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |get-env)
+                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text "|\"port")
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |port)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |if)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |some?)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |p?)
+                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |parse-float)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |p?)
+                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |:port)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |config/site)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |run-server!)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |port)
+                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |println)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |str)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text "|\"Server started on port:")
+                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |port)
+              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |do)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |;)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text "|\"init it before doing multi-threading")
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |identity)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |@*reader-reel)
+              |yT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |set-interval)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |200)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |fn)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |render-loop!)
+              |yj $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |set-interval)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |600000)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |fn)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |persist-db!)
+              |yr $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981467305)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |on-control-c)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981467305) (:text |on-exit!)
+          |get-backup-path! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
             :data $ {}
-              |yT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |get-backup-path!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/process.on)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"SIGINT")
-                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |on-exit!)
-              |yj $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |repeat!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |600)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |let)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                         :data $ {}
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |persist-db!)
-              |T $ {} (:text |defn) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |j $ {} (:text |main!) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |r $ {}
-                :data $ {}
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-              |v $ {}
-                :data $ {}
-                  |T $ {} (:text |println) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |j $ {} (:text "|\"Running mode:") (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |r $ {}
-                    :data $ {}
-                      |T $ {} (:text |if) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                      |j $ {} (:text |config/dev?) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                      |r $ {} (:text "|\"dev") (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                      |v $ {} (:text "|\"release") (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                    :type :expr
-                    :at 1629224139585
-                    :by |B1y7Rc-Zz
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-              |x $ {}
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |let)
-                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                    :data $ {}
-                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |port)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |now)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |if)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |.extract)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |some?)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/process.env.port)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/parseInt)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/process.env.port)
-                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:port)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |config/site)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |get-time!)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |run-server!)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |port)
-                  |v $ {}
-                    :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                      |j $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |join-path)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |calcit-dirname)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text "|\"backups")
+                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |str)
-                          |j $ {} (:text "|\"Server started on port: ") (:type :leaf) (:at 1629230052246) (:by |B1y7Rc-Zz)
-                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |port)
-                        :type :expr
-                        :at 1629224139585
-                        :by |B1y7Rc-Zz
-                    :type :expr
-                    :at 1629224139585
-                    :by |B1y7Rc-Zz
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |render-loop!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*loop-trigger)
-            :type :expr
-            :at 1629224139585
-            :by |B1y7Rc-Zz
-          |*loop-trigger $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |str)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |:month)
+                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |now)
+                      |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |str)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981583205)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |:day)
+                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text |now)
+                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981583205) (:text "|\"-snapshot.cirru")
+          |on-exit! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981481560)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defatom)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*loop-trigger)
-              |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |0)
-          |on-exit! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |on-exit!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981481560)
+                :data $ {}
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981481560)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |persist-db!)
+              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981481560)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |;)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |println)
+                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text "|\"exit code is...")
+              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981481560)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |quit!)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981481560) (:text |0)
+          |dispatch! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defn)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |on-exit!)
-              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |dispatch!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |code)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |_)
-              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-data)
+                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |sid)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |persist-db!)
-              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |;)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"exit code is:")
-                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |let)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |pr-str)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |code)
-              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/process.exit)
-          |dispatch! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-id)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |generate-id!)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-time)
+                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |->)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |get-time!)
+                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |.timestamp)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |if)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |config/dev?)
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |println)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text "|\"Dispatch!")
+                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |str)
+                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op)
+                          |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-data)
+                          |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |sid)
+                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |if)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |=)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op)
+                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |:effect/persist)
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |persist-db!)
+                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |reset!)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |*reel)
+                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981444165)
+                            :data $ {}
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |reel-reducer)
+                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |@*reel)
+                              |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |updater)
+                              |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op)
+                              |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-data)
+                              |y $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |sid)
+                              |yT $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-id)
+                              |yj $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |op-time)
+                              |yr $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981444165) (:text |config/dev?)
+          |run-server! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defn)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |dispatch!)
-              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |run-server!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-data)
-                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |port)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |let)
-                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |wss-serve!)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                     :data $ {}
-                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-id)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |id!)
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-time)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |unix-time!)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |&{})
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:port)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |port)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |if)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |config/dev?)
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |fn)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"Dispatch!")
-                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |data)
+                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                        :data $ {}
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |key-match)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |data)
+                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |str)
-                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op)
-                          |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-data)
-                          |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                    :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |if)
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |=)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op)
-                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:effect/persist)
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |persist-db!)
-                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reset!)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*reel)
-                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reel-reducer)
-                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reel)
-                              |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |updater)
-                              |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op)
-                              |x $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-data)
-                              |y $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                              |yT $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-id)
-                              |yj $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |op-time)
-                              |yr $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |config/dev?)
-          |run-server! $ {}
-            :data $ {}
-              |T $ {} (:text |defn) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |j $ {} (:text |run-server!) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-              |r $ {}
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |port)
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-              |v $ {}
-                :data $ {}
-                  |T $ {} (:text |wss-serve!) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |j $ {} (:text |port) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                  |r $ {}
-                    :data $ {}
-                      |T $ {} (:text |{}) (:type :leaf) (:at 1629224139585) (:by |B1y7Rc-Zz)
-                      |j $ {}
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:on-open)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |socket)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:connect)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |sid)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*proxied-dispatch!)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:session/connect)
-                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |nil)
-                                  |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"New client.")
-                        :type :expr
-                        :at 1629224139585
-                        :by |B1y7Rc-Zz
-                      |r $ {}
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:on-data)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |action)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |case-default)
-                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |do)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:kind)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |action)
-                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |dispatch!)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:session/connect)
+                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |nil)
+                                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |sid)
+                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"unknown action:")
-                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |action)
-                                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |println)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text "|\"New client.")
+                          |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                            :data $ {}
+                              |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:message)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |sid)
+                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |msg)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                :data $ {}
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |let)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                     :data $ {}
-                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:op)
-                                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                      |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                         :data $ {}
-                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*proxied-dispatch!)
-                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |action)
+                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                             :data $ {}
-                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:op)
-                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |action)
-                                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |parse-cirru-edn)
+                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |msg)
+                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                    :data $ {}
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |case-default)
+                                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                        :data $ {}
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:kind)
+                                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |action)
+                                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                        :data $ {}
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |println)
+                                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text "|\"unknown action:")
+                                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |action)
+                                      |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                        :data $ {}
+                                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:op)
+                                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                             :data $ {}
-                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:data)
-                                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |action)
-                                          |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                        :type :expr
-                        :at 1629224139585
-                        :by |B1y7Rc-Zz
-                      |v $ {}
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:on-close)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |dispatch!)
+                                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                                :data $ {}
+                                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:op)
+                                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |action)
+                                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                                :data $ {}
+                                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:data)
+                                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |action)
+                                              |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |sid)
+                          |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |event)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:disconnect)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |sid)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"Client closed!")
-                              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*proxied-dispatch!)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:session/disconnect)
-                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |nil)
-                                  |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sid)
-                        :type :expr
-                        :at 1629224139585
-                        :by |B1y7Rc-Zz
-                      |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:on-error)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |do)
+                                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                    :data $ {}
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |println)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text "|\"Client closed!")
+                                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
+                                    :data $ {}
+                                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |dispatch!)
+                                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |:session/disconnect)
+                                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |nil)
+                                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |sid)
+                          |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                             :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |_)
+                              |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981534261)
                                 :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |error)
-                              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                                :data $ {}
-                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/console.error)
-                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |error)
-                    :type :expr
-                    :at 1629224139585
-                    :by |B1y7Rc-Zz
-                :type :expr
-                :at 1629224139585
-                :by |B1y7Rc-Zz
-            :type :expr
-            :at 1629224139585
-            :by |B1y7Rc-Zz
-          |render-loop! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |println)
+                                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text "|\"unknown data:")
+                                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981534261) (:text |data)
+          |render-loop! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
             :data $ {}
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defn)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |render-loop!)
-              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |render-loop!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*loop)
-              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |when)
-                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |when)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |not)
-                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |not)
+                      |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
                         :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |identical?)
-                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reader-reel)
-                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reel)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |identical?)
+                          |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |@*reader-reel)
+                          |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |@*reel)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reset!)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*reader-reel)
-                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reel)
-                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |reset!)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |*reader-reel)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |@*reel)
+                  |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981947957)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sync-clients!)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reader-reel)
-              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reset!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*loop)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                    :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |delay!)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |0.2)
-                      |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                        :data $ {}
-                          |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fn)
-                          |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                          |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                            :data $ {}
-                              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |render-loop!)
-                              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*loop)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |sync-clients!)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981947957) (:text |@*reader-reel)
           |*client-caches $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
             :data $ {}
               |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defatom)
@@ -2312,61 +2337,59 @@
               |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
                 :data $ {}
                   |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |{})
-          |reload! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+          |reload! $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
             :data $ {}
-              |yT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |defn)
+              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |reload!)
+              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reset!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*reel)
-                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |println)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text "|\"Code updated..")
+              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
+                :data $ {}
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |if)
+                  |j $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
                     :data $ {}
-                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |refresh-reel)
-                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reel)
-                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*initial-db)
-                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |updater)
-              |yj $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |not)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |config/dev?)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |raise)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text "|\"reloading only happens in dev mode")
+              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |js/clearTimeout)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*loop-trigger)
-              |yr $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |clear-twig-caches!)
+              |yT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |render-loop!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*loop-trigger)
-              |yv $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |reset!)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |*reel)
+                  |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
+                    :data $ {}
+                      |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |refresh-reel)
+                      |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |@*reel)
+                      |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |@*initial-db)
+                      |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |updater)
+              |yj $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981509035)
                 :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |sync-clients!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |@*reader-reel)
-              |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |defn)
-              |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reload!)
-              |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-              |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |println)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"Code updated.")
-              |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |clear-twig-caches!)
-              |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                :data $ {}
-                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reset!)
-                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |*proxied-dispatch!)
-                  |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |dispatch!)
+                  |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |sync-clients!)
+                  |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981509035) (:text |@*reader-reel)
         :ns $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
           :data $ {}
             |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |ns)
             |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |app.server)
             |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
               :data $ {}
-                |yyT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                |yyT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981610471)
                   :data $ {}
-                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |ws-edn.server)
-                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:refer)
-                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981610471) (:text |wss.core)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981610471) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981610471)
                       :data $ {}
-                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |wss-serve!)
-                        |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |wss-send!)
-                        |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |wss-each!)
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981610471) (:text |wss-serve!)
+                        |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981610471) (:text |wss-send!)
+                        |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981610471) (:text |wss-each!)
                 |yyj $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
                   :data $ {}
                     |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |recollect.twig)
@@ -2375,35 +2398,48 @@
                       :data $ {}
                         |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |new-twig-loop!)
                         |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |clear-twig-caches!)
-                |yT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
+                |yyr $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981597528)
                   :data $ {}
-                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"path")
-                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:as)
-                    |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |path)
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981597528) (:text |app.$meta)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981597528) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981597528)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981597528) (:text |calcit-dirname)
+                |yyv $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                  :data $ {}
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |calcit.std.fs)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |path-exists?)
+                        |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |check-write-file!)
+                |yyx $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                  :data $ {}
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |calcit.std.time)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |set-interval)
+                |yyy $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                  :data $ {}
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |calcit.std.date)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |Date)
+                        |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |get-time!)
+                |yyyT $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                  :data $ {}
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |calcit.std.path)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981601032)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981601032) (:text |join-path)
                 |yj $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
                   :data $ {}
                     |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |app.config)
                     |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:as)
                     |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |config)
-                |yr $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                  :data $ {}
-                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |cumulo-util.file)
-                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:refer)
-                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                      :data $ {}
-                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |write-mildly!)
-                        |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |get-backup-path!)
-                        |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |merge-local-edn!)
-                |yv $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                  :data $ {}
-                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |cumulo-util.core)
-                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:refer)
-                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                      :data $ {}
-                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |id!)
-                        |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |repeat!)
-                        |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |unix-time!)
-                        |v $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |delay!)
                 |yx $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
                   :data $ {}
                     |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |app.twig.container)
@@ -2431,13 +2467,6 @@
                     |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
                       :data $ {}
                         |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |updater)
-                |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                  :data $ {}
-                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |cljs.reader)
-                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:refer)
-                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                      :data $ {}
-                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |read-string)
                 |x $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
                   :data $ {}
                     |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |cumulo-reel.core)
@@ -2447,11 +2476,6 @@
                         |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reel-reducer)
                         |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |refresh-reel)
                         |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |reel-schema)
-                |y $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1629224139585)
-                  :data $ {}
-                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text "|\"fs")
-                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |:as)
-                    |r $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1629224139585) (:text |fs)
       |app.twig.container $ {}
         :defs $ {}
           |twig-container $ {}
@@ -2717,7 +2741,9 @@
                             :at 1500541255553
                             :by nil
                             :id |HJUQxIbx0rZ
-                          |v $ {} (:text |nil) (:type :leaf) (:at 1507830683551) (:by |root) (:id |ryg7ssXahb)
+                          |v $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981636843)
+                            :data $ {}
+                              |T $ {} (:text |{}) (:type :leaf) (:at 1636981638207) (:by |B1y7Rc-Zz) (:id |ryg7ssXahb)
                         :type :expr
                         :at 1500541255553
                         :by nil
@@ -5060,16 +5086,13 @@
                   :at 1500541255553
                   :by nil
                   :id |H16ClL-l0SZ
-                |r $ {}
+                |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981631341)
                   :data $ {}
-                    |T $ {} (:text |[]) (:type :leaf) (:at 1513097119283) (:by |root) (:id |rkDjPKTbfleaf)
-                    |j $ {} (:text ||md5) (:type :leaf) (:at 1513097121683) (:by |root) (:id |H1GPjPKpZf)
-                    |r $ {} (:text |:default) (:type :leaf) (:at 1629224829000) (:by |B1y7Rc-Zz) (:id |r1-ciPFpWG)
-                    |v $ {} (:text |md5) (:type :leaf) (:at 1513097123766) (:by |root) (:id |SkQojvtaWG)
-                  :type :expr
-                  :at 1513097118588
-                  :by |root
-                  :id |rkDjPKTbf
+                    |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981631341) (:text |calcit.std.hash)
+                    |j $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981631341) (:text |:refer)
+                    |r $ {} (:type :expr) (:by |B1y7Rc-Zz) (:at 1636981631341)
+                      :data $ {}
+                        |T $ {} (:type :leaf) (:by |B1y7Rc-Zz) (:at 1636981631341) (:text |md5)
               :type :expr
               :at 1500541255553
               :by nil
@@ -7440,6 +7463,10 @@
           :at 1543857794828
           :by |B1y7Rc-Zz
           :id |2jJia0atWi
-  :users $ {}
-    |B1y7Rc-Zz $ {} (:avatar nil) (:name |chen) (:nickname |chen) (:id |B1y7Rc-Zz) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
-    |root $ {} (:avatar nil) (:name |root) (:nickname |root) (:id |root) (:theme :star-trail) (:password |d41d8cd98f00b204e9800998ecf8427e)
+  :configs $ {} (:reload-fn |app.client/reload!) (:port 6001) (:storage-key |calcit.cirru)
+    :modules $ [] |respo.calcit/ |lilac/ |recollect/ |memof/ |respo-ui.calcit/ |ws-edn.calcit/ |cumulo-util.calcit/ |respo-message.calcit/ |cumulo-reel.calcit/ |respo-markdown.calcit/
+    :init-fn |app.client/main!
+  :entries $ {}
+    :server $ {} (:reload-fn |app.server/reload!) (:port 6001) (:storage-key |calcit.cirru)
+      :modules $ [] |lilac/ |recollect/ |memof/ |cumulo-util.calcit/ |cumulo-reel.calcit/ |calcit.std/ |calcit-wss/
+      :init-fn |app.server/main!
