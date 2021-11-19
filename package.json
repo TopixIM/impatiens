@@ -4,14 +4,9 @@
   "description": "A tiny chatroom",
   "main": "index.js",
   "scripts": {
-    "watch-server": "cr --emit-js",
-    "build-server": "yarn webpack && node js-out/bundle.js",
-    "dev-server": "hot=true webpack --watch",
-    "compile-server": "cr --emit-js --once",
-    "compile-page": "cr --emit-js --once --init-fn app.client/main! --reload-fn app.client/reload! --emit-path out-page",
+    "compile-page": "cr --emit-js --once",
     "release-page": "vite build --base=./",
-    "release-server": "webpack",
-    "watch-page": "cr --emit-js --emit-path out-page/ --init-fn app.client/main! --reload-fn app.client/reload!"
+    "watch-page": "cr --emit-js/"
   },
   "repository": {
     "type": "git",
@@ -20,19 +15,14 @@
   "author": "jiyinyiyong",
   "license": "MIT",
   "devDependencies": {
-    "feather-icons": "^4.9.0",
     "bottom-tip": "^0.1.2",
-    "md5": "^2.3.0",
-    "randomcolor": "^0.6.2",
+    "feather-icons": "^4.9.0",
+    "luxon": "^2.1.1",
     "shortid": "^2.2.16",
     "url-parse": "^1.5.3",
-    "vite": "^2.5.0",
-    "webpack": "^5.50.0",
-    "webpack-cli": "^4.8.0",
-    "ws": "^8.1.0",
-    "luxon": "^1.8.2"
+    "vite": "^2.6.14"
   },
   "dependencies": {
-    "@calcit/procs": "^0.4.16"
+    "@calcit/procs": "^0.5.7"
   }
 }
