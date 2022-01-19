@@ -17,12 +17,12 @@
   "devDependencies": {
     "bottom-tip": "^0.1.2",
     "feather-icons": "^4.9.0",
-    "luxon": "^2.1.1",
+    "luxon": "^2.3.0",
     "shortid": "^2.2.16",
-    "url-parse": "^1.5.3",
-    "vite": "^2.6.14"
+    "url-parse": "^1.5.4",
+    "vite": "^2.7.13"
   },
   "dependencies": {
-    "@calcit/procs": "^0.5.7"
+    "@calcit/procs": "^0.5.15"
   }
 }

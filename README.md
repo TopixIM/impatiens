@@ -8,7 +8,7 @@ Impatiens: a very tiny chatroom.
 
 ### Workflow
 
-https://github.com/Cumulo/workflow.calcit/
+https://github.com/Cumulo/calcium-workflow
 
 ### License
 
