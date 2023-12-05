@@ -20,7 +20,7 @@
     "luxon": "^3.4.3",
     "shortid": "^2.2.16",
     "url-parse": "^1.5.10",
-    "vite": "^4.4.11"
+    "vite": "^4.4.12"
   },
   "dependencies": {
     "@calcit/procs": "^0.8.4"
