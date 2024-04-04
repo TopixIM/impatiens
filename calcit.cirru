@@ -212,6 +212,13 @@
                       |j $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |config/dev?)
                       |r $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text "|\"dev")
                       |v $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text "|\"release")
+              |w $ %{} :Expr (:at 1712209132655) (:by |B1y7Rc-Zz)
+                :data $ {}
+                  |T $ %{} :Leaf (:at 1712209133141) (:by |B1y7Rc-Zz) (:text |if)
+                  |b $ %{} :Leaf (:at 1712209136503) (:by |B1y7Rc-Zz) (:text |config/dev?)
+                  |h $ %{} :Expr (:at 1712209137662) (:by |B1y7Rc-Zz)
+                    :data $ {}
+                      |T $ %{} :Leaf (:at 1712209141631) (:by |B1y7Rc-Zz) (:text |load-console-formatter!)
               |x $ %{} :Expr (:at 1629224171598) (:by |B1y7Rc-Zz)
                 :data $ {}
                   |T $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |render-app!)
@@ -308,10 +315,7 @@
                                 :data $ {}
                                   |T $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |js/console.log)
                                   |j $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text "|\"Changes")
-                                  |r $ %{} :Expr (:at 1629224171598) (:by |B1y7Rc-Zz)
-                                    :data $ {}
-                                      |T $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |to-js-data)
-                                      |j $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |changes)
+                                  |r $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |changes)
                           |v $ %{} :Expr (:at 1629224171598) (:by |B1y7Rc-Zz)
                             :data $ {}
                               |T $ %{} :Leaf (:at 1629224171598) (:by |B1y7Rc-Zz) (:text |reset!)

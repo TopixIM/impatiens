@@ -41,6 +41,7 @@
           :code $ quote
             defn main! ()
               println "\"Running mode:" $ if config/dev? "\"dev" "\"release"
+              if config/dev? $ load-console-formatter!
               render-app!
               connect!
               add-watch *store :changes $ fn (store prev) (render-app!)
@@ -57,7 +58,7 @@
               tag-match data $ 
                 :patch changes
                 do
-                  when config/dev? $ js/console.log "\"Changes" (to-js-data changes)
+                  when config/dev? $ js/console.log "\"Changes" changes
                   reset! *store $ patch-twig @*store changes
         |reload! $ %{} :CodeEntry (:doc |)
           :code $ quote
