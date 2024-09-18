@@ -19,7 +19,7 @@
     "feather-icons": "^4.29.1",
     "luxon": "^3.4.4",
     "url-parse": "^1.5.10",
-    "vite": "^5.2.8"
+    "vite": "^5.2.14"
   },
   "dependencies": {
     "@calcit/procs": "^0.8.46",
