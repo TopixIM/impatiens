@@ -11,3 +11,5 @@ backups/
 impatiens.cirru
 
 yarn-error.log
+
+.DS_Store

@@ -4,9 +4,9 @@
   "description": "A tiny chatroom",
   "main": "index.js",
   "scripts": {
-    "compile-page": "cr --emit-js --once",
+    "compile-page": "cr js --once",
     "release-page": "vite build --base=./",
-    "watch-page": "cr --emit-js/"
+    "watch-page": "cr js"
   },
   "repository": {
     "type": "git",
@@ -16,14 +16,14 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
-    "feather-icons": "^4.29.1",
-    "luxon": "^3.4.4",
+    "feather-icons": "^4.29.2",
+    "luxon": "^3.7.2",
     "url-parse": "^1.5.10",
-    "vite": "^5.4.20"
+    "vite": "^7.1.5"
   },
   "dependencies": {
-    "@calcit/procs": "^0.8.46",
+    "@calcit/procs": "^0.9.18",
     "cirru-color": "^0.2.4",
-    "copy-text-to-clipboard": "^3.2.0"
+    "copy-text-to-clipboard": "^3.2.1"
   }
 }

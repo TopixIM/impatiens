@@ -14,14 +14,12 @@ jobs:
 
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 24
         cache: 'yarn'
 
-    - uses: calcit-lang/setup-cr@0.0.3
-      with:
-        version: "0.8.46"
+    - uses: calcit-lang/setup-cr@0.0.8
 
-    - run: caps --ci && cr --entry server --emit-ir -1
+    - run: caps --ci && cr --entry server ir -1
 
     - run: yarn && yarn compile-page && yarn release-page
 
