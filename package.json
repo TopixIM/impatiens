@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "description": "A tiny chatroom",
   "main": "index.js",
+  "packageManager": "yarn@4.12.0",
   "scripts": {
-    "compile-page": "cr js --once",
+    "compile-page": "cr js",
     "release-page": "vite build --base=./",
-    "watch-page": "cr js"
+    "watch-page": "cr js -w"
   },
   "repository": {
     "type": "git",
@@ -16,13 +17,14 @@
   "license": "MIT",
   "devDependencies": {
     "bottom-tip": "^0.1.5",
+    "dayjs": "^1.11.13",
     "feather-icons": "^4.29.2",
     "luxon": "^3.7.2",
     "url-parse": "^1.5.10",
     "vite": "^7.3.2"
   },
   "dependencies": {
-    "@calcit/procs": "^0.9.18",
+    "@calcit/procs": "^0.12.14",
     "cirru-color": "^0.2.4",
     "copy-text-to-clipboard": "^3.2.1"
   }
