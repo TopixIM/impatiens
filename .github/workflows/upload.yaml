@@ -10,49 +10,57 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 24
-        cache: 'yarn'
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
 
-    - uses: calcit-lang/setup-cr@0.0.8
+      - uses: calcit-lang/setup-cr@0.0.8
+        with:
+          version: 0.12.14
 
-    - run: caps --ci && cr --entry server ir -1
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.12.0 --activate
+          yarn --version
 
-    - run: yarn && yarn compile-page && yarn release-page
+      - run: caps --ci && yarn install --immutable
 
-    - run: mkdir -p dist-server && cp compact.cirru dist-server && cp package.json dist-server/
-      name: Copy server scripts
+      - run: cr compact.cirru --entry server ir
 
+      - run: yarn compile-page && yarn release-page
 
-    - name: Upload web assets
-      id: deploy
-      uses: Pendect/action-rsyncer@v2.0.0
-      env:
-        DEPLOY_KEY: ${{secrets.rsync_private_key}}
-      with:
-        flags: '-avzr --progress'
-        options: ''
-        ssh_options: ''
-        src: 'dist/*'
-        dest: 'rsync-user@tiye.me:/web-assets/repo/${{ github.repository }}'
+      - run: mkdir -p dist-server && cp compact.cirru dist-server && cp package.json dist-server/
+        name: Copy server scripts
 
-    - name: Display status from deploy
-      run: echo "${{ steps.deploy.outputs.status }}"
+      - name: Upload web assets
+        id: deploy
+        uses: Pendect/action-rsyncer@v2.0.0
+        env:
+          DEPLOY_KEY: ${{secrets.rsync_private_key}}
+        with:
+          flags: '-avzr --progress'
+          options: ''
+          ssh_options: ''
+          src: 'dist/*'
+          dest: 'rsync-user@tiye.me:/web-assets/repo/${{ github.repository }}'
 
-    - name: Upload server script
-      id: deploy-server
-      uses: Pendect/action-rsyncer@v1.1.0
-      env:
-        DEPLOY_KEY: ${{secrets.rsync_private_key}}
-      with:
-        flags: '-avzr --progress'
-        options: ''
-        ssh_options: ''
-        src: 'dist-server/*'
-        dest: 'rsync-user@tiye.me:/servers/paste-sharing/'
+      - name: Display status from deploy
+        run: echo "${{ steps.deploy.outputs.status }}"
 
-    - name: Display status from deploy
-      run: echo "${{ steps.deploy-server.outputs.status }}"
+      - name: Upload server script
+        id: deploy-server
+        uses: Pendect/action-rsyncer@v1.1.0
+        env:
+          DEPLOY_KEY: ${{secrets.rsync_private_key}}
+        with:
+          flags: '-avzr --progress'
+          options: ''
+          ssh_options: ''
+          src: 'dist-server/*'
+          dest: 'rsync-user@tiye.me:/servers/paste-sharing/'
+
+      - name: Display status from deploy
+        run: echo "${{ steps.deploy-server.outputs.status }}"

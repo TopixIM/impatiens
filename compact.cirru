@@ -1,6 +1,6 @@
 
 {} (:package |app)
-  :configs $ {} (:init-fn |app.client/main!) (:reload-fn |app.client/reload!) (:version nil)
+  :configs $ {} (:init-fn |app.client/main!) (:reload-fn |app.client/reload!) (:version |0.0.1)
     :modules $ [] |respo.calcit/ |lilac/ |recollect/ |memof/ |respo-ui.calcit/ |ws-edn.calcit/ |cumulo-util.calcit/ |respo-message.calcit/ |cumulo-reel.calcit/ |respo-markdown.calcit/
   :entries $ {}
     :server $ {} (:init-fn |app.server/main!) (:port 6001) (:reload-fn |app.server/reload!) (:storage-key |calcit.cirru)
@@ -55,7 +55,7 @@
         |on-server-data $ %{} :CodeEntry (:doc |)
           :code $ quote
             defn on-server-data (data)
-              tag-match data $ 
+              tag-match data $
                 :patch changes
                 do
                   when config/dev? $ js/console.log "\"Changes" changes
@@ -239,10 +239,13 @@
                     if (:logged-in? store)
                       let
                           router $ :router store
-                        case (:name router)
-                          :profile $ comp-profile (:user store)
-                          :chatroom $ comp-chatroom (>> states :chatroom) (:data router) user-id
-                          <> router
+                        if
+                          = (:name router) :profile
+                          comp-profile (:user store)
+                          if
+                            = (:name router) :chatroom
+                            comp-chatroom (>> states :chatroom) (:data router) user-id
+                            <> (str "|Unknown route: " (:name router)) nil
                       comp-login states
                     comp-messages
                       get-in store $ [] :session :messages
