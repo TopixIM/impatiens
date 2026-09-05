@@ -24,7 +24,7 @@
     "vite": "^7.3.5"
   },
   "dependencies": {
-    "@calcit/procs": "^0.12.14",
+    "@calcit/procs": "0.13.77",
     "cirru-color": "^0.2.4",
     "copy-text-to-clipboard": "^3.2.1"
   }
