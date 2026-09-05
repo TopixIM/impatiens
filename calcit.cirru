@@ -26,9 +26,13 @@
         'connect! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn connect! () $ let
-                url-obj $ url-parse js/location.href true
-                host $ either (-> url-obj .-query .-host) js/location.hostname
-                port $ either (-> url-obj .-query .-port) (:port config/site)
+                url-obj $ unsafe-coerce (url-parse js/location.href true) 'JsObject
+                query $ unsafe-coerce (.-query url-obj) 'JsObject
+                host-value $ .-host query
+                port-value $ .-port query
+                host $ if (js-present? host-value) (unsafe-coerce host-value 'String) js/location.hostname
+                port $ if (js-present? port-value) (unsafe-coerce port-value 'String)
+                  str $ app.schema/read-field config/site :port
               ws-connect! (str |ws:// host |: port)
                 {}
                   :on-open $ fn (event) (simulate-login!)
@@ -40,7 +44,10 @@
           :code $ quote
             defn dispatch! (op)
               when
-                and config/dev? $ not= (nth op 0) :states
+                and config/dev? $ not=
+                    nth op 0
+                    , .unwrap-or :unknown
+                  , :states
                 js/console.log |Dispatch op
               tag-match op
                 (:states cursor s)
@@ -92,17 +99,18 @@
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn render-app! () $ render! mount-target
-              comp-container (:states @*states) @*store
+              comp-container (app.schema/read-field @*states :states) @*store
               , dispatch!
           :examples $ []
           :schema $ :: 'Dynamic
         'simulate-login! $ %{} 'CodeEntry (:doc |)
           :code $ quote
             defn simulate-login! () $ let
-                raw $ .!getItem js/localStorage (:storage-key config/site)
-              if (some? raw)
+                storage $ unsafe-coerce js/localStorage 'JsObject
+                raw $ .!getItem storage (app.schema/read-field config/site :storage-key)
+              if (js-present? raw)
                 do (println "|Found storage.")
-                  dispatch! :user/log-in $ parse-cirru-edn raw
+                  dispatch! :user/log-in $ parse-cirru-edn (unsafe-coerce raw 'String)
                 do $ println "|Found no storage."
           :examples $ []
           :schema $ :: 'Dynamic
@@ -150,39 +158,44 @@
           :code $ quote
             defcomp comp-chatroom (states router-data user-id)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states)
+                  cursor $ app.schema/read-field states :cursor
+                  state $ or (app.schema/read-field states :data)
                     {} $ :draft |
-                  message-dict $ :messages router-data
-                  user-dict $ :users router-data
+                  message-dict $ app.schema/read-field router-data :messages
+                  user-dict $ app.schema/read-field router-data :users
                 div
                   {} $ :style
-                    merge ui/flex ui/column $ {} (:padding 16) (:width 720)
-                      :border $ str "|1px solid " (hsl 0 0 96)
-                      :border-width "|0 1px 0 1px"
-                      :background-color :white
+                    merge
+                      unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
+                      unsafe-coerce ui/column $ :: 'Map 'Tag 'Dynamic
+                      {} (:padding 16) (:width 720)
+                        :border $ str "|1px solid " (hsl 0 0 96)
+                        :border-width "|0 1px 0 1px"
+                        :background-color :white
                   if (empty? message-dict) chunk-no-message $ comp-message-list message-dict user-dict user-id
                   div
                     {} $ :style ui/row
                     input $ {}
-                      :style $ merge ui/textarea ui/flex
+                      :style $ merge
+                        unsafe-coerce ui/textarea $ :: 'Map 'Tag 'Dynamic
+                        unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
                         {} (:height 32) (:line-height |32px)
                       :placeholder |Message
-                      :value $ :draft state
+                      :value $ app.schema/read-field state :draft
                       :on-input $ fn (e d!)
-                        d! cursor $ assoc state :draft (:value e)
+                        d! cursor $ assoc state :draft (app.schema/read-field e :value)
                       :on-keydown $ fn (e d!)
                         if
-                          = 13 $ :keycode e
+                          = 13 $ assert-type (app.schema/read-field e :keycode) 'Number
                           do
-                            d! :message/send $ :draft state
+                            d! :message/send $ app.schema/read-field state :draft
                             d! cursor $ assoc state :draft |
                     =< 8 nil
                     button
                       {} (:style style/button)
                         :on-click $ fn (e d!)
                           do
-                            d! :message/send $ :draft state
+                            d! :message/send $ app.schema/read-field state :draft
                             d! cursor $ assoc state :draft |
                       <> |Send
           :examples $ []
@@ -192,25 +205,33 @@
             defcomp comp-message (message user mine? followed?)
               div
                 {} $ :style
-                  merge ui/row
-                    {} $ :align-items :center
-                    if mine? $ {}
-                      :color $ hsl 0 0 70
+                  merge
+                    unsafe-coerce ui/row $ :: 'Map 'Tag 'Dynamic
+                    unsafe-coerce
+                      {} $ :align-items :center
+                      :: 'Map 'Tag 'Dynamic
+                    unsafe-coerce
+                      if mine? $ {}
+                        :color $ hsl 0 0 70
+                      :: 'Map 'Tag 'Dynamic
                 div
                   {} $ :style
                     {} (:width 72) (:white-space :nowrap) (:overflow :hidden) (:text-overflow :ellipsis) (:flex-shrink 0) (:text-align :right)
                   if (not followed?)
-                    <> $ str (:name user) |:
+                    <> $ str (app.schema/read-field user :name) |:
                 =< 8 nil
-                <> (:text message) ui/flex
+                <> (app.schema/read-field message :text) ui/flex
                 =< 8 nil
                 <>
                   let
-                      date-time $ .!fromMillis DateTime (:time message)
+                      date-time $ unsafe-coerce
+                        .!fromMillis DateTime $ assert-type (app.schema/read-field message :time) 'Number
+                        , 'JsObject
+                      now $ unsafe-coerce (.!local DateTime) 'JsObject
                     if
-                      -> DateTime (.!local) (.!hasSame date-time |day)
-                      .!toFormat date-time |HH:mm
-                      .!toFormat date-time "|MM-dd HH:mm"
+                      unsafe-coerce (.!hasSame now date-time |day) 'Bool
+                      unsafe-coerce (.!toFormat date-time |HH:mm) 'String
+                      unsafe-coerce (.!toFormat date-time "|MM-dd HH:mm") 'String
                   {}
                     :color $ hsl 0 0 80
                     :font-size 10
@@ -222,24 +243,45 @@
             defcomp comp-message-list (message-dict user-dict user-id)
               div
                 {} $ :style
-                  merge ui/flex $ {} (:overflow :auto) (:padding-bottom 160)
+                  merge
+                    unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
+                    {} (:overflow :auto) (:padding-bottom 160)
                 list->
                   {} $ :style ({})
                   loop
                       acc $ []
                       last-author-id nil
                       sorted-messages $ -> message-dict (.to-list)
-                        .sort-by $ fn (pair)
-                          :time $ last pair
-                    if (empty? sorted-messages) acc $ let-sugar
-                          [] k message
+                        .sort $ fn (pair-a pair-b)
+                          &compare
+                            assert-type
+                              app.schema/read-field
+                                  last pair-a
+                                  , .unwrap
+                                , :time
+                              , 'Number
+                            assert-type
+                              app.schema/read-field
+                                  last pair-b
+                                  , .unwrap
+                                , :time
+                              , 'Number
+                    if (empty? sorted-messages) acc $ let
+                        head $
                           first sorted-messages
-                        author-id $ :user-id message
+                          , .unwrap
+                        k $ first head
+                        message $
+                          last head
+                          , .unwrap
+                        author-id $ app.schema/read-field message :user-id
                         mine? $ = user-id author-id
                         followed? $ = last-author-id author-id
                       recur
                         conj acc $ [] k
-                          comp-message message (get user-dict author-id) mine? followed?
+                          comp-message message
+                            (get user-dict author-id) .unwrap-or $ {}
+                            , mine? followed?
                         , author-id $ rest sorted-messages
                 , chunk-clear-tool
           :examples $ []
@@ -261,35 +303,43 @@
           :code $ quote
             defcomp comp-container (states store)
               let
-                  state $ :data states
-                  session $ :session store
-                  user-id $ get-in store ([] :user :id)
+                  state $ app.schema/read-field states :data
+                  session $ app.schema/read-field store :session
+                  user-id $
+                    get-in store $ [] :user :id
+                    , .unwrap-or nil
                 if (nil? store) (comp-offline)
                   div
                     {} $ :style
-                      merge ui/global ui/fullscreen ui/center $ {}
-                        :background-color $ hsl 0 0 94
-                    comp-header $ :logged-in? store
-                    if (:logged-in? store)
+                      merge
+                        unsafe-coerce ui/global $ :: 'Map 'Tag 'Dynamic
+                        unsafe-coerce ui/fullscreen $ :: 'Map 'Tag 'Dynamic
+                        unsafe-coerce ui/center $ :: 'Map 'Tag 'Dynamic
+                        {} $ :background-color (hsl 0 0 94)
+                    comp-header $ app.schema/read-field store :logged-in?
+                    if (app.schema/read-field store :logged-in?)
                       let
-                          router $ :router store
+                          router $ app.schema/read-field store :router
                         if
-                          = (:name router) :profile
-                          comp-profile $ :user store
+                          = (app.schema/read-field router :name) :profile
+                          comp-profile $ app.schema/read-field store :user
                           if
-                            = (:name router) :chatroom
-                            comp-chatroom (>> states :chatroom) (:data router) user-id
+                            = (app.schema/read-field router :name) :chatroom
+                            comp-chatroom (>> states :chatroom) (app.schema/read-field router :data) user-id
                             <>
-                              str "|Unknown route: " $ :name router
+                              str "|Unknown route: " $ app.schema/read-field router :name
                               , nil
                       comp-login states
                     comp-messages
-                      get-in store $ [] :session :messages
+                      ->
+                        get-in store $ [] :session :messages
+                        .unwrap-or $ {}
+                        unsafe-coerce $ :: 'Map 'String 'Dynamic
                       {}
                       fn (info d!) (d! :session/remove-message info)
                     title $ {} (:inner-text |Title2)
-                    if dev? $ comp-reel (:reel-length store) ({})
-                    if dev? $ comp-inspect |Router (:user store) style-debugger
+                    if dev? $ comp-reel (app.schema/read-field store :reel-length) ({})
+                    if dev? $ comp-inspect |Router (app.schema/read-field store :user) style-debugger
           :examples $ []
           :schema $ :: 'Dynamic
         'comp-offline $ %{} 'CodeEntry (:doc |)
@@ -393,10 +443,13 @@
           :code $ quote
             defcomp comp-login (states)
               let
-                  cursor $ :cursor states
-                  state $ or (:data states) initial-state
+                  cursor $ app.schema/read-field states :cursor
+                  state $ or (app.schema/read-field states :data) initial-state
                 div
-                  {} $ :style (merge ui/flex ui/center)
+                  {} $ :style
+                    merge
+                      unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
+                      unsafe-coerce ui/center $ :: 'Map 'Tag 'Dynamic
                   div
                     {} $ :style
                       {} (:font-size 40) (:margin-bottom 20) (:font-weight 100) (:font-family ui/font-fancy)
@@ -405,20 +458,20 @@
                     {} $ :style ({})
                     div ({})
                       input $ {} (:placeholder |Username)
-                        :value $ :username state
+                        :value $ app.schema/read-field state :username
                         :style ui/input
                         :on-input $ fn (e d!)
-                          d! cursor $ assoc state :username (:value e)
+                          d! cursor $ assoc state :username (app.schema/read-field e :value)
                   =< nil 8
                   div
                     {} $ :style ({})
                     button $ {} (:inner-text "|Sign up")
                       :style $ merge style/button
-                      :on-click $ on-submit (:username state) (:password state) true
+                      :on-click $ on-submit (app.schema/read-field state :username) (app.schema/read-field state :password) true
                     =< 8 nil
                     button $ {} (:inner-text "|Sign in")
                       :style $ merge style/button
-                      :on-click $ on-submit (:username state) (:password state) false
+                      :on-click $ on-submit (app.schema/read-field state :username) (app.schema/read-field state :password) false
           :examples $ []
           :schema $ :: 'Dynamic
         'initial-state $ %{} 'CodeEntry (:doc |)
@@ -454,7 +507,7 @@
                   merge ui/flex $ {} (:padding 16)
                 div ({})
                   <>
-                    str "|Hello! " $ :name user
+                    str "|Hello! " $ app.schema/read-field user :name
                     , nil
                 =< nil 40
                 div ({})
@@ -572,8 +625,7 @@
           :schema $ :: 'Dynamic
         '*reel $ %{} 'CodeEntry (:doc |)
           :code $ quote
-            defatom *reel $ merge reel-schema
-              {} (:base @*initial-db) (:db @*initial-db)
+            defatom *reel $ struct-with reel-schema (:base @*initial-db) (:db @*initial-db)
           :examples $ []
           :schema $ :: 'Dynamic
         'dispatch! $ %{} 'CodeEntry (:doc |)
@@ -592,8 +644,8 @@
             defn get-backup-path! () $ let
                 now $ .extract (get-time!)
               join-path calcit-dirname |backups
-                str $ :month now
-                str (:day now) |-snapshot.cirru
+                str $ app.schema/read-field now :month
+                str (app.schema/read-field now :day) |-snapshot.cirru
           :examples $ []
           :schema $ :: 'Dynamic
         'main! $ %{} 'CodeEntry (:doc |)
@@ -602,7 +654,8 @@
               println "|Running mode:" $ if config/dev? |dev |release
               let
                   p? $ get-env |port
-                  port $ if (some? p?) (parse-float p?) (:port config/site)
+                  port $ parse-float
+                    p? .unwrap-or $ str (:port config/site)
                 run-server! port
                 println $ str "|Server started on port:" port
               do (; "|init it before doing multi-threading") (identity @*reader-reel)
@@ -620,7 +673,7 @@
           :code $ quote
             defn persist-db! () $ let
                 file-content $ format-cirru-edn
-                  assoc (:db @*reel) :sessions $ {}
+                  assoc (app.schema/read-field @*reel :db) :sessions $ {}
                 storage-path storage-file
                 backup-path $ get-backup-path!
               check-write-file! storage-path file-content
@@ -676,8 +729,8 @@
             defn sync-clients! (reel)
               wss-each! $ fn (sid)
                 let
-                    db $ :db reel
-                    records $ :records reel
+                    db $ app.schema/read-field reel :db
+                    records $ app.schema/read-field reel :records
                     session $ get-in db ([] :sessions sid)
                     old-store $ or (get @*client-caches sid) nil
                     new-store $ twig-container db session records
@@ -728,20 +781,22 @@
           :code $ quote
             defn twig-container (db session records)
               let
-                  logged-in? $ some? (:user-id session)
-                  router $ :router session
+                  user-id $ app.schema/read-field session :user-id
+                  logged-in? $ some? user-id
+                  router $ app.schema/read-field session :router
                   base-data $ {} (:logged-in? logged-in?) (:session session)
                     :reel-length $ count records
                 merge base-data $ if logged-in?
                   {}
                     :user $ twig-user
-                      get-in db $ [] :users (:user-id session)
-                    :router $ case-default (:name router) router (:profile router)
+                        get-in db $ [] :users user-id
+                        , .unwrap-or $ {}
+                    :router $ case-default (app.schema/read-field router :name) router (:profile router)
                       :chatroom $ assoc router :data
                         {}
-                          :users $ :users db
-                          :messages $ :messages db
-                    :count-sessions $ count (:sessions db)
+                          :users $ app.schema/read-field db :users
+                          :messages $ app.schema/read-field db :messages
+                    :count-sessions $ count (app.schema/read-field db :sessions)
                   {}
           :examples $ []
           :schema $ :: 'Dynamic
@@ -749,6 +804,7 @@
         :code $ quote
           ns app.twig.container $ :require
             [] app.twig.user :refer $ [] twig-user
+            [] app.schema :as app.schema
     'app.twig.user $ %{} 'FileEntry
       :defs $ {}
         'twig-user $ %{} 'CodeEntry (:doc |)
@@ -828,7 +884,9 @@
             defn remove-message (db op-data sid op-id op-time)
               update-in db ([] :sessions sid :messages)
                 fn (messages)
-                  dissoc messages $ :id op-data
+                  dissoc
+                    messages .unwrap-or $ {}
+                    app.schema/read-field op-data :id
           :examples $ []
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
@@ -842,21 +900,30 @@
               let-sugar
                     [] username password
                     , op-data
-                  maybe-user $ -> (:users db) (vals) (.to-list)
+                  maybe-user $ -> (app.schema/read-field db :users) (vals) (.to-list)
                     find $ fn (user)
-                      and $ = username (:name user)
+                      = username $ assert-type (app.schema/read-field user :name) 'String
                 update-in db ([] :sessions sid)
                   fn (session)
-                    if (some? maybe-user)
-                      if
-                        = (md5 password) (:password maybe-user)
-                        assoc session :user-id $ :id maybe-user
-                        update session :messages $ fn (messages)
-                          assoc messages op-id $ {} (:id op-id)
-                            :text $ str "|Wrong password for " username
-                      update session :messages $ fn (messages)
-                        assoc messages op-id $ {} (:id op-id)
-                          :text $ str "|No user named: " username
+                    let
+                        session-data $ session .unwrap-or schema/session
+                      if (option:some? maybe-user)
+                        let
+                            user $ maybe-user .unwrap
+                          if
+                            = (md5 password)
+                              assert-type (app.schema/read-field user :password) 'String
+                            assoc session-data :user-id $ app.schema/read-field user :id
+                            update session-data :messages $ fn (messages)
+                              assoc
+                                if (map? messages) messages $ {}
+                                , op-id $ {} (:id op-id)
+                                  :text $ str "|Wrong password for " username
+                        update session-data :messages $ fn (messages)
+                          assoc
+                            if (map? messages) messages $ {}
+                            , op-id $ {} (:id op-id)
+                              :text $ str "|No user named: " username
           :examples $ []
           :schema $ :: 'Dynamic
         'log-out $ %{} 'CodeEntry (:doc |)
@@ -872,14 +939,16 @@
                     [] username password
                     , op-data
                   maybe-user $ find
-                    vals $ :users db
+                    -> (app.schema/read-field db :users) (vals) (.to-list)
                     fn (user)
-                      = username $ :name user
-                if (some? maybe-user)
+                      = username $ assert-type (app.schema/read-field user :name) 'String
+                if (option:some? maybe-user)
                   update-in db ([] :sessions sid :messages)
                     fn (messages)
-                      assoc messages op-id $ {} (:id op-id)
-                        :text $ str "|Name is taken: " username
+                      assoc
+                        messages .unwrap-or $ {}
+                        , op-id $ {} (:id op-id)
+                          :text $ str "|Name is taken: " username
                   -> db
                     assoc-in ([] :sessions sid :user-id) op-id
                     assoc-in ([] :users op-id)
@@ -893,6 +962,8 @@
           ns app.updater.user $ :require
             [] app.util :refer $ [] find-first
             calcit.std.hash :refer $ md5
+            [] app.schema :as app.schema
+            [] app.schema :as schema
     'app.util $ %{} 'FileEntry
       :defs $ {}
         'get-env! $ %{} 'CodeEntry (:doc |)
