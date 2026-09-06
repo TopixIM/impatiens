@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          caps --ci
+          caps --strict --ci
           yarn install --immutable
 
       - name: Verify Calcit runtime toolchain
@@ -43,6 +43,11 @@ jobs:
           git diff --exit-code -- calcit.cirru
           calcit calcit.cirru --check-only
           calcit calcit.cirru --entry server --check-only
+          calcit calcit.cirru analyze quality --baseline config/calcit-quality.cirru
+          calcit calcit.cirru analyze dynamic-methods --max 0
+          calcit calcit.cirru --entry server analyze dynamic-methods --max 0
+          calcit calcit.cirru analyze deprecated --summary-only
+          calcit calcit.cirru --entry server analyze deprecated --summary-only
 
       - name: Build web assets
         run: yarn compile-page && yarn release-page
@@ -53,7 +58,7 @@ jobs:
       - name: Upload web assets
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: deploy
-        uses: Pendect/action-rsyncer@v2.0.0
+        uses: Pendect/action-rsyncer@8e05ffa5c93e5d9c9b167796b26044d2c616b2b9 # v2.0.0
         env:
           DEPLOY_KEY: ${{secrets.rsync_private_key}}
         with:
@@ -70,7 +75,7 @@ jobs:
       - name: Upload server script
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: deploy-server
-        uses: Pendect/action-rsyncer@v1.1.0
+        uses: Pendect/action-rsyncer@2554a1e574cf229fb144f23ea5971dbdca8ae8e3 # v1.1.0
         env:
           DEPLOY_KEY: ${{secrets.rsync_private_key}}
         with:
