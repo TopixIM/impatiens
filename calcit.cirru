@@ -611,7 +611,7 @@
         'get-backup-path! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-backup-path! ()
             let
-                now $ .extract $ get-time!
+                now $ calcit.std.date/extract-time $ get-time!
               join-path calcit-dirname |backups
                 str $ app.schema/read-field now :month
                 str (app.schema/read-field now :day) |-snapshot.cirru
