@@ -602,7 +602,7 @@
           :code $ quote $ defn dispatch! (op sid)
             let
                 op-id $ generate-id!
-                op-time $ -> (get-time!) (.timestamp)
+                op-time $ calcit.std.date/get-timestamp $ get-time!
               if config/dev? $ println |Dispatch! (str op) sid
               if (= op :effect/persist) (persist-db!)
                 reset! *reel $ reel-reducer @*reel updater op sid op-id op-time config/dev?
