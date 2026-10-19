@@ -95,6 +95,16 @@ jobs:
           echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
           echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
           yarn compile-page
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { DateTime } from 'luxon';
+          import { format_message_time } from './js-out/app.comp.chatroom.mjs';
+          for (const time of [0, Date.now()]) {
+            const date = DateTime.fromMillis(time);
+            const pattern = DateTime.local().hasSame(date, 'day') ? 'HH:mm' : 'MM-dd HH:mm';
+            assert.equal(format_message_time(time), date.toFormat(pattern));
+          }
+          JS
           yarn release-page
 
       - run: mkdir -p dist-server && cp calcit.cirru dist-server && cp deps.cirru package.json dist-server/

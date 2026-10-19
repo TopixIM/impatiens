@@ -22,7 +22,9 @@ https://github.com/Cumulo/calcium-workflow
 
 生产运行排队且不取消进行中的上传；上传前只检查一次 main SHA，旧提交跳过部署。这不保证原子发布。原 web rsync 路径及 `/servers/paste-sharing/` 服务端路径保持不变，`dist-server/` 不上传到 COS。
 
-依赖安装改用 `caps --strict --ci`，不再以版本冲突 warning 代替严格解析。本地不运行 Caps；本地使用独立模块视图，完整安装结果以 PR 的全新 CI 为准。完整 strict、全部 browser 74/74 和 native 72/72 定义检查、原生 8/8 测试均已通过；共享发布版 runner 回放同一组 5 个存档/协议测试，native 与 JS 各 5/5、无排除项。CI 复用此 runner，不复制项目专用检查脚本。
+依赖安装改用 `caps --strict --ci`，不再以版本冲突 warning 代替严格解析。本地不运行 Caps；本地使用独立模块视图，完整安装结果以 PR 的全新 CI 为准。完整 strict、全部 browser 72/72 和 native 72/72 定义检查、原生 8/8 测试均已通过；共享发布版 runner 回放同一组 5 个存档/协议测试，native 与 JS 各 5/5、无排除项。CI 复用此 runner，不复制项目专用检查脚本。
+
+日期显示使用一个 Number→String 的 inline JS FFI，直接调用真实 Luxon 静态方法，保留原 `HH:mm` / `MM-dd HH:mm` 格式；不把 callable `DateTime` 类强转为普通宿主对象。此边界受 [Calcit #2153](https://github.com/calcit-lang/calcit/issues/2153) 影响，构建步骤会调用实际生成适配器并对比两种格式，不改 runtime 或新增 compiler fix。
 
 Node 24/Yarn 不可变安装和 Vite 构建通过；保留原 >500 kB bundle 提示，不放宽门禁来消除提示。两条真实本地 WebSocket 连接已验证注册、登录、Unicode 消息、清空、用户投影、路由和退出；SIGINT 保存、冷启动登录及 release 调试操作隔离通过。损坏存档在监听前失败且文件不变。真实浏览器访客页已连接，账户写入 localStorage 的交互验收仍等待授权，不将这部分声称为已完成。
 

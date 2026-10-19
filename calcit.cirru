@@ -184,28 +184,6 @@
             |../js-out/calcit.build-errors :default server-errors
     'app.comp.chatroom $ %{} 'FileEntry
       :defs $ {}
-        'DateTimeHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait DateTimeHost
-            .hasSame $ :: 'Fn $ {}
-              :args $ [] 'app.comp.chatroom/DateTimeHost 'app.comp.chatroom/DateTimeHost 'String
-              :return 'Bool
-            .toFormat $ :: 'Fn $ {}
-              :args $ [] 'app.comp.chatroom/DateTimeHost 'String
-              :return 'String
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object)
-          :schema $ :: 'Trait
-        'DateTimeModuleHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait DateTimeModuleHost
-            .fromMillis $ :: 'Fn $ {}
-              :args $ [] 'app.comp.chatroom/DateTimeModuleHost 'Number
-              :return 'app.comp.chatroom/DateTimeHost
-            .local $ :: 'Fn $ {}
-              :args $ [] 'app.comp.chatroom/DateTimeModuleHost
-              :return 'app.comp.chatroom/DateTimeHost
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object)
-          :schema $ :: 'Trait
         'chunk-clear-tool $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def chunk-clear-tool
             div
@@ -347,13 +325,12 @@
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] (:: 'Map 'String 'app.schema/ChatMessage) (:: 'Map 'String 'app.schema/UserView) (:: 'Option 'String)
         'format-message-time $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn format-message-time (time)
-            let
-                module $ js-cast DateTime 'app.comp.chatroom/DateTimeModuleHost
-                date $ .fromMillis module time
-                now $ .local module
-              if (.hasSame now date |day) (.toFormat date |HH:mm) (.toFormat date "|MM-dd HH:mm")
+          :code $ quote $ defn format-message-time (time) (raise "|JavaScript-only Luxon adapter")
           :examples $ []
+          :ffi $ {} (:target :browser)
+            :js $ {}
+              :inline "|(time) => { const date = luxon.DateTime.fromMillis(time); return date.toFormat(luxon.DateTime.local().hasSame(date, 'day') ? 'HH:mm' : 'MM-dd HH:mm'); }"
+              :modules $ {} $ :luxon |luxon
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ [] 'Number
             :features $ #{} :js-ffi
@@ -364,7 +341,6 @@
             respo-ui.core :as ui
             respo.core :refer $ defcomp list-> <> span div input button
             respo.comp.space :refer $ =<
-            |luxon :refer $ DateTime
             app.style :as style
             app.schema :as schema
             app.browser :as adapter
