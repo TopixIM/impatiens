@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:mvc-works/cumulo-workflow.git"
+    "url": "git@github.com:TopixIM/impatiens.git"
   },
   "author": "jiyinyiyong",
   "license": "MIT",
@@ -20,11 +20,10 @@
     "dayjs": "^1.11.23",
     "feather-icons": "^4.29.2",
     "luxon": "^3.7.2",
-    "url-parse": "^1.5.10",
     "vite": "^8.2.2"
   },
   "dependencies": {
-    "@calcit/procs": "0.27.0",
+    "@calcit/procs": "0.30.1-alpha.5",
     "cirru-color": "^0.2.4",
     "copy-text-to-clipboard": "^3.2.2"
   }

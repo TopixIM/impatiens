@@ -5,162 +5,180 @@
   :entries $ {}
     :default $ {} (:description |) (:init-fn 'app.client/main!) (:mode :js) (:reload-fn 'app.client/reload!) (:target :browser)
       :feature-policy $ {}
-      :modules $ [] |respo.calcit/ |lilac/ |recollect/ |memof/ |respo-ui.calcit/ |ws-edn.calcit/ |cumulo-util.calcit/ |respo-message.calcit/ |cumulo-reel.calcit/ |respo-markdown.calcit/ |js-ffi/
+      :modules $ [] |respo.calcit/ |recollect/ |respo-ui.calcit/ |ws-edn.calcit/ |cumulo-util.calcit/ |respo-message.calcit/ |cumulo-reel.calcit/ |respo-markdown.calcit/ |js-ffi/
       :type-slots $ {}
     :server $ {} (:description |) (:init-fn 'app.server/main!) (:mode :native) (:reload-fn 'app.server/reload!) (:target :native)
       :feature-policy $ {}
-      :modules $ [] |lilac/ |recollect/ |memof/ |cumulo-util.calcit/ |cumulo-reel.calcit/ |calcit.std/ |calcit-wss/
+      :modules $ [] |recollect/ |cumulo-util.calcit/ |cumulo-reel.calcit/ |calcit.std/ |calcit-wss/
       :type-slots $ {}
   :files $ {}
+    'app.browser $ %{} 'FileEntry
+      :defs $ {} $ 'event-value
+        %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn event-value (event)
+            decode-map-as
+              .unwrap-or (get event :value) |
+              , 'String
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'String)
+            :args $ [] $ :: 'Map 'Tag 'Dynamic
+      :ns $ %{} 'NsEntry (:doc |)
+        :code $ quote $ ns app.browser
+          :require (js-ffi.browser :as browser) (js-ffi.shared :as host)
     'app.client $ %{} 'FileEntry
       :defs $ {}
         '*states $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *states
-            {} $ :states $ {}
-              :cursor $ []
+          :code $ quote $ defref *states
+            {} $ :cursor $ []
           :examples $ []
           :schema $ :: 'Ref 'Dynamic
         '*store $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *store nil
+          :code $ quote $ defref *store (Option :none)
+          :examples $ []
+          :schema $ :: 'Ref $ :: 'Option 'app.schema/Store
+        '*wire-store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defref *wire-store nil
           :examples $ []
           :schema $ :: 'Ref 'Dynamic
-        'BrowserStorageHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait BrowserStorageHost
-            .getItem $ :: 'Fn $ {}
-              :args $ [] 'app.client/BrowserStorageHost 'String
-              :return $ :: 'JsNullish 'String
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object)
-          :schema $ :: 'Trait
-        'UrlHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait UrlHost (:query 'app.client/UrlQueryHost)
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object)
-          :schema $ :: 'Trait
-        'UrlQueryHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait UrlQueryHost
-            :host $ :: 'JsNullish 'String
-            :port $ :: 'JsNullish 'String
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object)
-          :schema $ :: 'Trait
         'connect! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn connect! ()
-            let
-                url-obj $ unsafe-coerce (url-parse js/location.href true) 'app.client/UrlHost
-                query $ .-query url-obj
-                host-value $ .-host query
-                port-value $ .-port query
-                host $ if (js-present? host-value) (unsafe-coerce host-value 'String) js/location.hostname
-                port $ if (js-present? port-value) (unsafe-coerce port-value 'String)
-                  str $ app.schema/read-field config/site :port
-              ws-connect! (str |ws:// host |: port)
-                {}
-                  :on-open $ fn (event) (simulate-login!)
-                  :on-close $ fn (event) (reset! *store nil) (js/console.error "|Lost connection!")
-                  :on-data on-server-data
+          :code $ quote $ defn connect! () (reset! *wire-store nil)
+            reset! *store $ Option :none
+            ws-connect! (connection-url)
+              {}
+                :on-open $ fn (event) (simulate-login!)
+                :on-close $ fn (event) (reset! *wire-store nil)
+                  reset! *store $ Option :none
+                  host/console-error! |Lost-connection
+                :on-data on-server-data
             , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
+        'connection-url $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn connection-url ()
+            let
+                location $ browser/location-host
+                query $ host/search-params-create $ .-search location
+                server-host $ .unwrap-or (host/search-params-get query |host) (.-hostname location)
+                server-port $ .unwrap-or (host/search-params-get query |port)
+                  str $ :port config/site
+              str |ws:// server-host |: server-port
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'String)
+            :args $ []
             :features $ #{} :js-ffi
         'dispatch! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn dispatch! (op)
-            when
-              and config/dev? $ not=
-                  nth op 0
-                  , .unwrap-or :unknown
-                , :states
-              js/console.log |Dispatch op
-            match op
-              (:states cursor s)
-                reset! *states $ update-states @*states cursor s
-              (:effect/connect) (connect!)
-              _ $ ws-send! op
+          :code $ quote $ defn dispatch! (raw)
+            let
+                op $ schema/decode-op raw
+              match op
+                (:states cursor state)
+                  reset! *states $ update-state-tree @*states cursor state
+                (:effect/connect) (connect!)
+                _ $ ws-send! $ schema/encode-op op
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
-            if config/dev? $ load-console-formatter!
             render-app!
             connect!
-            add-watch *store :changes $ fn (store prev) (render-app!)
-            add-watch *states :changes $ fn (states prev) (render-app!)
-            on-page-touch $ fn ()
-              if (nil? @*store) (connect!)
-              , &unit
-            println "|App started!"
+            add-watch! *store :changes $ fn (store previous) (render-app!)
+            add-watch! *states :changes $ fn (states previous) (render-app!)
+            on-page-touch $ fn () $ match @*store
+              (:none) (connect!)
+              (:some store) &unit
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
-            :features $ #{} :js-ffi
         'mount-target $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn mount-target () (js/document.querySelector |.app)
+          :code $ quote $ defn mount-target ()
+            .unwrap $ dom/query-selector |.app
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'respo.dom/DomElement)
             :args $ []
-            :features $ #{} :js-ffi
         'on-server-data $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-server-data (data)
-            match data $
-              :patch changes
-              do
-                when config/dev? $ js/console.log |Changes changes
-                reset! *store $ patch-twig @*store $ unsafe-coerce changes (:: 'List 'recollect.schema/change-op)
+            try
+              if (enum? data)
+                match data
+                  (:patch raw-changes)
+                    let
+                        changes $ decode-changes raw-changes
+                        result $ try-patch-twig @*wire-store changes
+                      match result
+                        (:ok candidate)
+                          let
+                              decoded $ schema/decode-store candidate
+                            reset! *wire-store candidate
+                            reset! *store $ Option :some decoded
+                        (:err error)
+                          raise $ patch-error-message error
+                  _ $ raise |Unsupported-server-message
+                raise |Expected-server-message-enum
+              fn (error)
+                host/console-error! $ str |Rejected-server-patch: error
+                hud! |error error
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ [] 'Dynamic
             :features $ #{} :js-ffi
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if
-              or (some? client-errors) (some? server-errors)
+              or (js-present? client-errors) (js-present? server-errors)
               hud! |error $ str client-errors &newline server-errors
-              do (hud! |inactive nil) (remove-watch *store :changes) (remove-watch *states :changes) (clear-cache!) (render-app!)
-                add-watch *store :changes $ fn (store prev) (render-app!)
-                add-watch *states :changes $ fn (states prev) (render-app!)
-                println "|Code updated."
+              do (hud! |inactive nil) (remove-watch! *store :changes) (remove-watch! *states :changes) (clear-cache!) (render-app!)
+                add-watch! *store :changes $ fn (store previous) (render-app!)
+                add-watch! *states :changes $ fn (states previous) (render-app!)
+                println |Code-updated
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
             :features $ #{} :js-ffi
         'render-app! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-app! ()
-            render! (mount-target)
-              comp-container (app.schema/read-field @*states :states) @*store
+            render-with! (mount-target)
+              fn () $ comp-container @*states @*store
               , dispatch!
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
-            :features $ #{} :js-ffi
         'simulate-login! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn simulate-login! ()
-            let
-                storage $ unsafe-coerce js/localStorage 'app.client/BrowserStorageHost
-                raw $ storage .getItem $ app.schema/read-field config/site :storage-key
-              if (js-present? raw)
-                do (println "|Found storage.")
-                  dispatch! $ :: :user/log-in $ parse-cirru-edn (unsafe-coerce raw 'String)
-                println "|Found no storage."
+            match
+              browser/storage-get $ :storage-key config/site
+              (:none) &unit
+              (:some content)
+                try
+                  ws-send! $ schema/encode-op $ schema/Op :user/log-in
+                    schema/decode-credentials $ parse-cirru-edn content
+                  fn (error)
+                    host/console-error! $ str |Invalid-saved-login: error
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
-            :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.client
           :require
-            respo.core :refer $ render! clear-cache! realize-ssr!
-            respo.cursor :refer $ update-states
+            respo.core :refer $ render-with! clear-cache!
+            respo.ffi.browser :as dom
+            respo.cursor :refer $ update-state-tree
             app.comp.container :refer $ comp-container
             app.schema :as schema
             app.config :as config
             ws-edn.client :refer $ ws-connect! ws-send!
-            recollect.patch :refer $ patch-twig
+            recollect.patch :refer $ try-patch-twig patch-error-message
+            recollect.schema :refer $ decode-changes
             cumulo-util.core :refer $ on-page-touch
-            |url-parse :default url-parse
+            js-ffi.browser :as browser
+            js-ffi.shared :as host
             |bottom-tip :default hud!
             |./calcit.build-errors :default client-errors
             |../js-out/calcit.build-errors :default server-errors
@@ -200,28 +218,36 @@
                   :cursor :pointer
                   :font-size 12
                 :inner-text "|阅后即焚"
-                :on-click $ fn (e d!) (d! :message/clear nil)
+                :on-click $ fn (e d!)
+                  hint-fn $ {} (:return 'Unit)
+                    :args $ [] (:: 'Map 'Tag 'Dynamic)
+                      :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                        :args $ [] 'Dynamic
+                  d! $ :: :message/clear
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'respo.schema/Element
         'chunk-no-message $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def chunk-no-message
             <> "|No messages yet..." $ {} (:font-family ui/font-fancy) (:font-weight 300) (:font-size 32)
               :color $ hsl 0 0 60
               :margin-bottom 8
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'respo.schema/Element
         'comp-chatroom $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-chatroom (states router-data user-id)
             let
-                cursor $ app.schema/read-field states :cursor
-                state $ or (app.schema/read-field states :data)
-                  {} $ :draft |
-                message-dict $ app.schema/read-field router-data :messages
-                user-dict $ app.schema/read-field router-data :users
+                state-map $ decode-map-as states $ :: 'Map 'Tag 'Dynamic
+                cursor $ decode-map-as
+                  .unwrap-or (get state-map :cursor) ([])
+                  :: 'List 'Dynamic
+                state $ match (get state-map :data)
+                  (:none) (schema/DraftState :draft |)
+                  (:some raw)
+                    decode-map-as (schema/data-map raw) 'app.schema/DraftState
+                message-dict $ :messages router-data
+                user-dict $ :users router-data
               div
-                {} $ :style $ merge
-                  unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
-                  unsafe-coerce ui/column $ :: 'Map 'Tag 'Dynamic
+                {} $ :style $ merge ui/flex ui/column
                   {} (:padding 16) (:width 720)
                     :border $ str "|1px solid " $ hsl 0 0 96
                     :border-width "|0 1px 0 1px"
@@ -230,167 +256,164 @@
                 div
                   {} $ :style ui/row
                   input $ {}
-                    :style $ merge
-                      unsafe-coerce ui/textarea $ :: 'Map 'Tag 'Dynamic
-                      unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
-                      {} (:height 32) (:line-height |32px)
+                    :style $ merge ui/textarea ui/flex $ {} (:height 32) (:line-height |32px)
                     :placeholder |Message
-                    :value $ app.schema/read-field state :draft
+                    :value $ :draft state
                     :on-input $ fn (e d!)
-                      d! cursor $ assoc state :draft $ app.schema/read-field e :value
+                      hint-fn $ {} (:return 'Unit)
+                        :args $ [] (:: 'Map 'Tag 'Dynamic)
+                          :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                            :args $ [] 'Dynamic
+                      d! cursor $ assoc state :draft $ adapter/event-value e
                     :on-keydown $ fn (e d!)
+                      hint-fn $ {} (:return 'Unit)
+                        :args $ [] (:: 'Map 'Tag 'Dynamic)
+                          :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                            :args $ [] 'Dynamic
                       if
-                        = 13 $ assert-type (app.schema/read-field e :keycode) 'Number
+                        = 13 $ decode-map-as
+                          .unwrap-or (get e :keycode) 0
+                          , 'Number
                         do
-                          d! :message/send $ app.schema/read-field state :draft
+                          d! :message/send $ :draft state
                           d! cursor $ assoc state :draft |
+                      , &unit
                   =< 8 nil
                   button
                     {} (:style style/button)
                       :on-click $ fn (e d!)
-                        d! :message/send $ app.schema/read-field state :draft
+                        hint-fn $ {} (:return 'Unit)
+                          :args $ [] (:: 'Map 'Tag 'Dynamic)
+                            :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                              :args $ [] 'Dynamic
+                        d! :message/send $ :draft state
                         d! cursor $ assoc state :draft |
                     <> |Send
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'Dynamic 'app.schema/ChatroomData $ :: 'Option 'String
         'comp-message $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-message (message user mine? followed?)
+          :code $ quote $ defcomp comp-message (message username mine? followed?)
             div
-              {} $ :style $ merge
-                unsafe-coerce ui/row $ :: 'Map 'Tag 'Dynamic
-                unsafe-coerce
-                  {} $ :align-items :center
-                  :: 'Map 'Tag 'Dynamic
-                unsafe-coerce
-                  if mine? $ {} $ :color (hsl 0 0 70)
-                  :: 'Map 'Tag 'Dynamic
+              {} $ :style $ merge ui/row
+                {} $ :align-items :center
+                if mine?
+                  {} $ :color $ hsl 0 0 70
+                  {}
               div
                 {} $ :style $ {} (:width 72) (:white-space :nowrap) (:overflow :hidden) (:text-overflow :ellipsis) (:flex-shrink 0) (:text-align :right)
                 if (not followed?)
-                  <> $ str (app.schema/read-field user :name) |:
+                  <> $ str username |:
               =< 8 nil
-              <> (app.schema/read-field message :text) ui/flex
+              <> (:text message) ui/flex
               =< 8 nil
               <>
-                let
-                    date-time-module $ unsafe-coerce DateTime 'app.comp.chatroom/DateTimeModuleHost
-                    date-time $ date-time-module .fromMillis $ assert-type (app.schema/read-field message :time) 'Number
-                    now $ date-time-module .local
-                  if (now .hasSame date-time |day) (date-time .toFormat |HH:mm) (date-time .toFormat "|MM-dd HH:mm")
+                format-message-time $ :time message
                 {}
                   :color $ hsl 0 0 80
                   :font-size 10
                   :vertical-align :middle
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic 'Bool 'Bool
-            :features $ #{} :js-ffi
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'app.schema/ChatMessage 'String 'Bool 'Bool
         'comp-message-list $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-message-list (message-dict user-dict user-id)
-            div
-              {} $ :style $ merge
-                unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
-                {} (:overflow :auto) (:padding-bottom 160)
-              list->
-                {} $ :style $ {}
-                loop
-                    acc $ []
-                    last-author-id nil
-                    sorted-messages $ -> (unsafe-coerce message-dict 'Map) (.to-list)
-                      .sort $ fn (pair-a pair-b)
-                        &compare
-                          assert-type
-                            app.schema/read-field
-                                last pair-a
-                                , .unwrap
-                              , :time
-                            , 'Number
-                          assert-type
-                            app.schema/read-field
-                                last pair-b
-                                , .unwrap
-                              , :time
-                            , 'Number
-                  if (empty? sorted-messages) acc $ let
-                      head $
-                        first sorted-messages
-                        , .unwrap
-                      k $ first head
-                      message $
-                        last head
-                        , .unwrap
-                      author-id $ app.schema/read-field message :user-id
-                      mine? $ = user-id author-id
-                      followed? $ = last-author-id author-id
-                    recur
-                      conj
-                        assert-type acc $ :: 'List 'Dynamic
-                        [] k $ comp-message message
-                          (get user-dict author-id) .unwrap-or $ {}
-                          , mine? followed?
-                      , author-id $ rest sorted-messages
-              , chunk-clear-tool
+            let
+                messages $ sort
+                  map-list-kv message-dict $ fn (id message) message
+                  fn (a b)
+                    &compare (:time a) (:time b)
+              div
+                {} $ :style $ merge ui/flex
+                  {} (:overflow :auto) (:padding-bottom 160)
+                list-> ({})
+                  map-indexed messages $ fn (idx message)
+                    let
+                        author-id $ :user-id message
+                        username $ match author-id
+                          (:none) |
+                          (:some id)
+                            match (get user-dict id)
+                              (:none) |
+                              (:some user) (:name user)
+                        followed? $ if (> idx 0)
+                          = author-id $ :user-id $ .unwrap
+                            nth messages $ dec idx
+                          , false
+                      [] (:id message)
+                        comp-message message username (= user-id author-id) followed?
+                , chunk-clear-tool
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] (:: 'Map 'String 'app.schema/ChatMessage) (:: 'Map 'String 'app.schema/UserView) (:: 'Option 'String)
+        'format-message-time $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn format-message-time (time)
+            let
+                module $ js-cast DateTime 'app.comp.chatroom/DateTimeModuleHost
+                date $ .fromMillis module time
+                now $ .local module
+              if (.hasSame now date |day) (.toFormat date |HH:mm) (.toFormat date "|MM-dd HH:mm")
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'String)
+            :args $ [] 'Number
             :features $ #{} :js-ffi
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.chatroom
           :require
-            respo-ui.core :refer $ [] hsl
+            respo-ui.core :refer $ hsl
             respo-ui.core :as ui
-            respo.core :refer $ [] defcomp list-> <> span div input button
-            respo.comp.space :refer $ [] =<
-            respo.util.list :refer $ [] map-val
-            |luxon :refer $ [] DateTime
+            respo.core :refer $ defcomp list-> <> span div input button
+            respo.comp.space :refer $ =<
+            |luxon :refer $ DateTime
             app.style :as style
+            app.schema :as schema
+            app.browser :as adapter
     'app.comp.container $ %{} 'FileEntry
       :defs $ {}
         'comp-container $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defcomp comp-container (states store)
-            let
-                state $ app.schema/read-field states :data
-                session $ app.schema/read-field store :session
-                user-id $
-                  get-in store $ [] :user :id
-                  , .unwrap-or nil
-              if (nil? store) (comp-offline)
+          :code $ quote $ defcomp comp-container (states maybe-store)
+            match maybe-store
+              (:none) (comp-offline)
+              (:some store)
                 div
-                  {} $ :style $ merge
-                    unsafe-coerce ui/global $ :: 'Map 'Tag 'Dynamic
-                    unsafe-coerce ui/fullscreen $ :: 'Map 'Tag 'Dynamic
-                    unsafe-coerce ui/center $ :: 'Map 'Tag 'Dynamic
+                  {} $ :style $ merge ui/global ui/fullscreen ui/center
                     {} $ :background-color $ hsl 0 0 94
-                  comp-header $ app.schema/read-field store :logged-in?
-                  if (app.schema/read-field store :logged-in?)
-                    let
-                        router $ app.schema/read-field store :router
-                      if
-                        = (app.schema/read-field router :name) :profile
-                        comp-profile $ app.schema/read-field store :user
-                        if
-                          = (app.schema/read-field router :name) :chatroom
-                          comp-chatroom (>> states :chatroom) (app.schema/read-field router :data) user-id
-                          <>
-                            str "|Unknown route: " $ app.schema/read-field router :name
-                            , nil
-                    comp-login states
+                  comp-header $ :logged-in? store
+                  match (:user store)
+                    (:none) (comp-login states)
+                    (:some user)
+                      match (:router store)
+                        (:none) (<> "|Missing route")
+                        (:some router)
+                          match (:name router)
+                            :profile $ comp-profile user
+                            :chatroom $ comp-chatroom (>> states :chatroom) (:data router)
+                              :user-id $ :session store
+                            _ $ <> $ str "|Unknown route: " (:name router)
                   comp-messages
-                    ->
-                      get-in store $ [] :session :messages
-                      .unwrap-or $ {}
-                      unsafe-coerce $ :: 'Map 'String 'Dynamic
+                    filter-map-kv
+                      :messages $ :session store
+                      fn (id message)
+                        MapEntryDecision :keep id $ {}
+                          :id $ :id message
+                          :text $ :text message
                     {}
-                    fn (info d!) (d! :session/remove-message info)
-                  title $ {} $ :inner-text |Title2
-                  if dev? $ comp-reel (app.schema/read-field store :reel-length) ({})
-                  if dev? $ comp-inspect |Router (app.schema/read-field store :user) style-debugger
+                    fn (info d!)
+                      hint-fn $ {} (:return 'Unit)
+                        :args $ [] (:: 'Map 'Tag 'Dynamic)
+                          :: 'Fn $ {}
+                            :args $ [] 'Dynamic
+                            :rest 'Dynamic
+                            :return 'Unit
+                      d! :session/remove-message $ decode-map-as
+                        .unwrap $ get info :id
+                        , 'String
+                  title $ {} $ :inner-text (:title config/site)
+                  when dev? $ comp-reel (:reel-length store) ({})
+                  when dev? $ comp-inspect |Router (:user store) style-debugger
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
-            :args $ [] 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+            :args $ [] 'Dynamic $ :: 'Option 'app.schema/Store
         'comp-offline $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-offline ()
             div
@@ -398,10 +421,15 @@
               span
                 {}
                   :style $ {} $ :cursor :pointer
-                  :on-click $ fn (e d! m!) (d! :effect/connect nil)
+                  :on-click $ fn (e d!)
+                    hint-fn $ {} (:return 'Unit)
+                      :args $ [] (:: 'Map 'Tag 'Dynamic)
+                        :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                          :args $ [] 'Dynamic
+                    d! $ :: :effect/connect
                 <> "|No connection!" style-alert
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ []
         'style-alert $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-alert
@@ -421,18 +449,19 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.container
           :require
-            respo-ui.core :refer $ [] hsl
+            respo-ui.core :refer $ hsl
             respo-ui.core :as ui
-            respo.core :refer $ [] defcomp <> >> div span button title
-            respo.comp.inspect :refer $ [] comp-inspect
-            respo.comp.space :refer $ [] =<
-            app.comp.header :refer $ [] comp-header
-            app.comp.profile :refer $ [] comp-profile
-            app.comp.login :refer $ [] comp-login
-            respo-message.comp.messages :refer $ [] comp-messages
-            cumulo-reel.comp.reel :refer $ [] comp-reel
-            app.comp.chatroom :refer $ [] comp-chatroom
-            app.config :refer $ [] dev?
+            respo.core :refer $ defcomp <> >> div span button title
+            respo.comp.inspect :refer $ comp-inspect
+            respo.comp.space :refer $ =<
+            app.comp.header :refer $ comp-header
+            app.comp.profile :refer $ comp-profile
+            app.comp.login :refer $ comp-login
+            respo-message.comp.messages :refer $ comp-messages
+            cumulo-reel.comp.reel :refer $ comp-reel
+            app.comp.chatroom :refer $ comp-chatroom
+            app.config :refer $ dev?
+            app.config :as config
     'app.comp.header $ %{} 'FileEntry
       :defs $ {}
         'comp-header $ %{} 'CodeEntry (:doc |)
@@ -446,20 +475,24 @@
                 {} (:style style-pointer) (:on-click on-profile)
                 <> (if logged-in? |Me |Guest) nil
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'Bool
         'on-home $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-home (e dispatch!)
-            dispatch! :router/change $ {} (:name :chatroom) (:data nil)
+            dispatch! :router/change $ assoc schema/router :name :chatroom
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] (:: 'Map 'Tag 'Dynamic)
+              :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                :args $ [] 'Dynamic
         'on-profile $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-profile (e dispatch!)
-            dispatch! :router/change $ {} (:name :profile) (:data nil)
+            dispatch! :router/change $ assoc schema/router :name :profile
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] (:: 'Map 'Tag 'Dynamic)
+              :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                :args $ [] 'Dynamic
         'style-header $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-header
             {} (:height 28) (:justify-content :space-between) (:padding "|0 16px") (:font-size 14) (:flex-shrink 0)
@@ -482,20 +515,26 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.header
           :require
-            respo-ui.core :refer $ [] hsl
+            respo-ui.core :refer $ hsl
             respo-ui.core :as ui
-            respo.core :refer $ [] defcomp <> span div
+            respo.core :refer $ defcomp <> span div
+            app.schema :as schema
+            app.browser :as adapter
     'app.comp.login $ %{} 'FileEntry
       :defs $ {}
         'comp-login $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-login (states)
             let
-                cursor $ app.schema/read-field states :cursor
-                state $ or (app.schema/read-field states :data) initial-state
+                state-map $ decode-map-as states $ :: 'Map 'Tag 'Dynamic
+                cursor $ decode-map-as
+                  .unwrap-or (get state-map :cursor) ([])
+                  :: 'List 'Dynamic
+                state $ match (get state-map :data)
+                  (:none) initial-state
+                  (:some raw)
+                    decode-map-as (schema/data-map raw) 'app.schema/LoginState
               div
-                {} $ :style $ merge
-                  unsafe-coerce ui/flex $ :: 'Map 'Tag 'Dynamic
-                  unsafe-coerce ui/center $ :: 'Map 'Tag 'Dynamic
+                {} $ :style $ merge ui/flex ui/center
                 div
                   {} $ :style $ {} (:font-size 40) (:margin-bottom 20) (:font-weight 100) (:font-family ui/font-fancy)
                   comp-md-block "|Impatiens is a tiny chatroom." $ {}
@@ -503,48 +542,61 @@
                   {} $ :style $ {}
                   div ({})
                     input $ {} (:placeholder |Username)
-                      :value $ app.schema/read-field state :username
+                      :value $ :username state
                       :style ui/input
                       :on-input $ fn (e d!)
-                        d! cursor $ assoc state :username $ app.schema/read-field e :value
+                        hint-fn $ {} (:return 'Unit)
+                          :args $ [] (:: 'Map 'Tag 'Dynamic)
+                            :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                              :args $ [] 'Dynamic
+                        d! cursor $ assoc state :username $ adapter/event-value e
                 =< nil 8
                 div
                   {} $ :style $ {}
                   button $ {} (:inner-text "|Sign up")
                     :style $ merge style/button
-                    :on-click $ on-submit (app.schema/read-field state :username) (app.schema/read-field state :password) true
+                    :on-click $ on-submit (:username state) (:password state) true
                   =< 8 nil
                   button $ {} (:inner-text "|Sign in")
                     :style $ merge style/button
-                    :on-click $ on-submit (app.schema/read-field state :username) (app.schema/read-field state :password) false
+                    :on-click $ on-submit (:username state) (:password state) false
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
             :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
         'initial-state $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def initial-state
-            {} (:username |) (:password |)
+          :code $ quote $ def initial-state (schema/LoginState :username | :password |)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'app.schema/LoginState
         'on-submit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-submit (username password signup?)
-            fn (e dispatch!)
+            fn (event dispatch!)
+              hint-fn $ {} (:return 'Unit)
+                :args $ [] (:: 'Map 'Tag 'Dynamic)
+                  :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                    :args $ [] 'Dynamic
               dispatch! (if signup? :user/sign-up :user/log-in) ([] username password)
-              js/localStorage.setItem (:local-storage-key schema/configs) ([] username password)
+              browser/storage-set! (:storage-key config/site)
+                format-cirru-edn $ [] username password
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'String 'String 'Bool
+            :return $ :: 'Fn $ {} (:return 'Unit)
+              :args $ [] (:: 'Map 'Tag 'Dynamic)
+                :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                  :args $ [] 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.login
           :require
-            [] respo.core :refer $ [] defcomp <> div input button span
-            [] respo.comp.space :refer $ [] =<
-            [] respo.comp.inspect :refer $ [] comp-inspect
-            [] respo-ui.core :as ui
-            [] app.schema :as schema
-            [] respo-md.comp.md :refer $ [] comp-md-block
-            [] app.style :as style
+            respo.core :refer $ defcomp <> div input button span
+            respo.comp.space :refer $ =<
+            respo.comp.inspect :refer $ comp-inspect
+            respo-ui.core :as ui
+            app.schema :as schema
+            respo-md.comp.md :refer $ comp-md-block
+            app.style :as style
+            app.browser :as adapter
+            app.config :as config
+            js-ffi.browser :as browser
     'app.comp.profile $ %{} 'FileEntry
       :defs $ {}
         'comp-profile $ %{} 'CodeEntry (:doc |)
@@ -554,7 +606,7 @@
                 {} $ :padding 16
               div ({})
                 <>
-                  str "|Hello! " $ app.schema/read-field user :name
+                  str "|Hello! " $ :name user
                   , nil
               =< nil 40
               div ({})
@@ -562,16 +614,17 @@
                   {} (:style style/button) (:on-click on-log-out)
                   <> "|Log out" nil
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ :: 'Fn $ {} (:return 'respo.schema/Component)
+            :args $ [] 'app.schema/UserView
         'on-log-out $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn on-log-out (e dispatch!) (dispatch! :user/log-out nil)
-            .removeItem js/localStorage $ app.schema/read-field schema/configs :local-storage-key
+          :code $ quote $ defn on-log-out (e dispatch!)
+            dispatch! $ :: :user/log-out
+            browser/storage-remove! $ :storage-key config/site
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic
-            :features $ #{} :js-ffi
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] (:: 'Map 'Tag 'Dynamic)
+              :: 'Fn $ {} (:rest 'Dynamic) (:return 'Unit)
+                :args $ [] 'Dynamic
         'style-trigger $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-trigger
             {} (:font-size 14) (:cursor :pointer)
@@ -583,241 +636,687 @@
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.profile
           :require
-            respo-ui.core :refer $ [] hsl
+            respo-ui.core :refer $ hsl
             app.schema :as schema
             respo-ui.core :as ui
-            respo.core :refer $ [] defcomp <> span button div a
-            respo.comp.space :refer $ [] =<
+            respo.core :refer $ defcomp <> span button div a
+            respo.comp.space :refer $ =<
             app.style :as style
+            app.browser :as adapter
+            app.config :as config
+            js-ffi.browser :as browser
     'app.config $ %{} 'FileEntry
       :defs $ {}
         'dev? $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def dev?
-            = |dev $ option:unwrap-or (get-env |mode) |release
+            = |dev $ .unwrap-or (get-env |mode) |release
           :examples $ []
           :schema $ :: 'Dynamic
         'site $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def site
-            {} (:storage-key |impatiens) (:storage-file |impatiens.cirru) (:port 11001) (:title |Impatiens) (:icon |http://cdn.tiye.me/logo/impatiens.png) (:dev-ui |http://localhost:8100/main.css) (:release-ui |http://cdn.tiye.me/favored-fonts/main.css) (:cdn-url |http://cdn.tiye.me/impatiens/) (:cdn-folder |tiye.me:cdn/impatiens) (:upload-folder |tiye.me:repo/TopixIM/impatiens/) (:server-folder |tiye.me:servers/impatiens) (:theme |#eeeeff)
+            schema/Site :storage-key |impatiens :storage-file |impatiens.cirru :port 11001 :title |Impatiens :icon |http://cdn.tiye.me/logo/impatiens.png :dev-ui |http://localhost:8100/main.css :release-ui |http://cdn.tiye.me/favored-fonts/main.css :cdn-url |http://cdn.tiye.me/impatiens/ :cdn-folder |tiye.me:cdn/impatiens :upload-folder |tiye.me:repo/TopixIM/impatiens/ :server-folder |tiye.me:servers/impatiens :theme |#eeeeff
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'app.schema/Site
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.config
-          :require $ [] app.util :refer $ [] get-env!
+          :require $ app.schema :as schema
     'app.schema $ %{} 'FileEntry
       :defs $ {}
-        'configs $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def configs
-            {} (:storage-key |/data/TopixIM/impatiens.edn) (:local-storage-key |workflow-storage) (:port 11001)
+        'ChatMessage $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct ChatMessage (:id 'String) (:text 'String) (:time 'Number)
+            :user-id $ :: 'Option 'String
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'StructDef
+        'ChatroomData $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct ChatroomData
+            :users $ :: 'Map 'String 'app.schema/UserView
+            :messages $ :: 'Map 'String 'app.schema/ChatMessage
+          :examples $ []
+          :schema $ :: 'StructDef
+        'Db $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Db
+            :sessions $ :: 'Map 'Number 'app.schema/Session
+            :users $ :: 'Map 'String 'app.schema/User
+            :messages $ :: 'Map 'String 'app.schema/ChatMessage
+          :examples $ []
+          :schema $ :: 'StructDef
+        'DraftState $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct DraftState (:draft 'String)
+          :examples $ []
+          :schema $ :: 'StructDef
+        'LoginState $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct LoginState (:username 'String) (:password 'String)
+          :examples $ []
+          :schema $ :: 'StructDef
+        'Message $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Message (:id 'String) (:text 'String)
+          :examples $ []
+          :schema $ :: 'StructDef
+        'Op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defenum Op (:session/connect) (:session/disconnect) (:session/remove-message 'String)
+            :user/log-in $ :: 'List 'String
+            :user/sign-up $ :: 'List 'String
+            :user/log-out
+            :router/change 'app.schema/Router
+            :message/send 'String
+            :message/clear
+            :states (:: 'List 'Dynamic) 'Dynamic
+            :effect/connect
+            :reel/reset
+            :reel/merge
+            :effect/persist
+          :examples $ []
+          :schema $ :: 'EnumDef
+        'Router $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Router (:name 'Tag)
+            :title $ :: 'Option 'String
+            :data 'Dynamic
+            :router 'Dynamic
+          :examples $ []
+          :schema $ :: 'StructDef
+        'RouterView $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct RouterView (:name 'Tag) (:data 'app.schema/ChatroomData)
+          :examples $ []
+          :schema $ :: 'StructDef
+        'Session $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Session (:id 'Number)
+            :user-id $ :: 'Option 'String
+            :nickname $ :: 'Option 'String
+            :router 'app.schema/Router
+            :messages $ :: 'Map 'String 'app.schema/Message
+          :examples $ []
+          :schema $ :: 'StructDef
+        'Site $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Site (:storage-key 'String) (:storage-file 'String) (:port 'Number) (:title 'String) (:icon 'String) (:dev-ui 'String) (:release-ui 'String) (:cdn-url 'String) (:cdn-folder 'String) (:upload-folder 'String) (:server-folder 'String) (:theme 'String)
+          :examples $ []
+          :schema $ :: 'StructDef
+        'Store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Store (:logged-in? 'Bool) (:session 'app.schema/Session) (:reel-length 'Number)
+            :user $ :: 'Option 'app.schema/UserView
+            :router $ :: 'Option 'app.schema/RouterView
+            :count-sessions 'Number
+          :examples $ []
+          :schema $ :: 'StructDef
+        'User $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct User (:id 'String) (:name 'String)
+            :nickname $ :: 'Option 'String
+            :avatar $ :: 'Option 'String
+            :password 'String
+          :examples $ []
+          :schema $ :: 'StructDef
+        'UserView $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct UserView (:id 'String) (:name 'String)
+            :nickname $ :: 'Option 'String
+            :avatar $ :: 'Option 'String
+          :examples $ []
+          :schema $ :: 'StructDef
+        'data-map $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn data-map (raw)
+            if (struct? raw)
+              decode-map-as (&struct:to-map raw) (:: 'Map 'Tag 'Dynamic)
+              decode-map-as raw $ :: 'Map 'Tag 'Dynamic
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
         'database $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def database
-            {}
-              :sessions $ {}
-              :users $ {}
-              :messages $ {}
+            Db :sessions ({}) :users ({}) :messages $ {}
           :examples $ []
           :schema $ :: 'Dynamic
-        'notification $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def notification
-            {} (:id nil) (:kind nil) (:text nil)
+        'decode-credentials $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-credentials (raw)
+            let
+                credentials $ decode-map-as raw $ :: 'List 'String
+              if
+                = 2 $ count credentials
+                , credentials $ raise "|Expected two credential strings"
           :examples $ []
-          :schema $ :: 'Dynamic
-        'read-field $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn read-field (value field)
-            .unwrap-or (get value field) nil
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'List 'String
+        'decode-database $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-database (raw)
+            let
+                data $ merge
+                  {}
+                    :sessions $ {}
+                    :users $ {}
+                    :messages $ {}
+                  data-map raw
+                sessions $ decode-map-as
+                  .unwrap $ get data :sessions
+                  :: 'Map 'Number 'Dynamic
+                users $ decode-map-as
+                  .unwrap $ get data :users
+                  :: 'Map 'String 'Dynamic
+                normalized $ -> data
+                  assoc :sessions $ filter-map-kv sessions $ fn (id value)
+                    MapEntryDecision :keep id $ normalize-session value
+                  assoc :users $ filter-map-kv users $ fn (id value)
+                    MapEntryDecision :keep id $ normalize-user value
+                  assoc :messages $ filter-map-kv
+                    decode-map-as
+                      .unwrap $ get data :messages
+                      :: 'Map 'String 'Dynamic
+                    fn (id message)
+                      MapEntryDecision :keep id $ normalize-message message
+              decode-map-as normalized 'app.schema/Db
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Tag
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'Dynamic
+          :tests $ []
+            %{} 'TestEntry (:name |legacy-map-with-optional-chat-author)
+              :code $ quote $ let
+                  db $ decode-database $ {}
+                    :users $ {} $ |u
+                      {} (:id |u) (:name |Ada) (:password |hash) (:nickname nil) (:avatar nil)
+                    :sessions $ {}
+                    :messages $ {} $ |t
+                      {} (:id |t) (:time 1000) (:text |first) (:user-id nil)
+                  user $ .unwrap $ get (:users db) |u
+                  timedrop-value $ .unwrap $ get (:messages db) |t
+                assert= (Option :none) (:avatar user)
+                assert= (Option :none) (:nickname user)
+                assert= |Ada $ :name user
+                assert= 1000 $ :time timedrop-value
+                assert= |first $ :text timedrop-value
+              :tags $ #{} :migration :unit
+            %{} 'TestEntry (:name |reject-malformed-message-time)
+              :code $ quote $ assert= true
+                try
+                  do
+                    decode-database $ {} $ :messages
+                      {} $ |t $ {} (:id |t) (:time |bad) (:text |first)
+                    , false
+                  fn (error) true
+              :tags $ #{} :migration :unit
+            %{} 'TestEntry (:name |nominal-archive-roundtrip-keeps-optional-author)
+              :code $ quote $ let
+                  original $ decode-database $ {}
+                    :users $ {} $ |u
+                      {} (:id |u) (:name |Ada) (:password |hash) (:nickname nil) (:avatar nil)
+                    :messages $ {}
+                      |m $ {} (:id |m) (:text "|hello 🌸") (:time 1000) (:user-id |u)
+                      |g $ {} (:id |g) (:text |guest) (:time 1001) (:user-id nil)
+                  recovered $ decode-database $ parse-cirru-edn (format-cirru-edn original)
+                assert= original recovered
+                assert= (Option :some |u)
+                  :user-id $ .unwrap $ get (:messages recovered) |m
+                assert= (Option :none)
+                  :user-id $ .unwrap $ get (:messages recovered) |g
+                assert= true $ try
+                  do
+                    decode-database $ {} $ :unknown |must-not-silently-drop
+                    , false
+                  fn (error) true
+              :tags $ #{} :migration :unit
+        'decode-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-op (raw)
+            if (enum? raw)
+              match raw
+                (:message/send text)
+                  Op :message/send $ decode-map-as text 'String
+                (:message/clear) (Op :message/clear)
+                (:session/connect) (Op :session/connect)
+                (:session/disconnect) (Op :session/disconnect)
+                (:session/remove-message payload)
+                  Op :session/remove-message $ if (string? payload) payload $ decode-map-as
+                    .unwrap $ get
+                      decode-map-as payload $ :: 'Map 'Tag 'Dynamic
+                      , :id
+                    , 'String
+                (:user/log-in credentials)
+                  Op :user/log-in $ decode-credentials credentials
+                (:user/sign-up credentials)
+                  Op :user/sign-up $ decode-credentials credentials
+                (:user/log-out) (Op :user/log-out)
+                (:router/change route)
+                  Op :router/change $ decode-router route
+                (:states cursor state)
+                  Op :states
+                    decode-map-as cursor $ :: 'List 'Dynamic
+                    , state
+                (:effect/connect) (Op :effect/connect)
+                (:reel/reset) (Op :reel/reset)
+                (:reel/merge) (Op :reel/merge)
+                (:effect/persist) (Op :effect/persist)
+                _ $ raise "|Unsupported operation"
+              raise "|Expected operation enum"
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
+            :args $ [] 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |checked-chat-operation-roundtrip)
+            :code $ quote $ let
+                typed $ Op :message/send "|hello 🌸"
+              assert= (:: :message/send "|hello 🌸") (encode-op typed)
+              assert= typed $ decode-op $ parse-cirru-edn
+                format-cirru-edn $ encode-op typed
+              assert= (Op :message/clear)
+                decode-op $ :: :message/clear
+              assert= true $ try
+                do
+                  decode-op $ :: :user/log-in $ [] |Ada
+                  , false
+                fn (error) true
+            :tags $ #{} :migration :unit
+        'decode-optional-string $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-optional-string (raw)
+            if (nil? raw) (Option :none)
+              if (enum? raw)
+                match raw
+                  (:none) (Option :none)
+                  (:some value)
+                    Option :some $ decode-map-as value 'String
+                  _ $ raise |Invalid-optional-string
+                Option :some $ decode-map-as raw 'String
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Option 'String
+        'decode-router $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-router (raw)
+            decode-map-as (normalize-router raw) 'app.schema/Router
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Router)
+            :args $ [] 'Dynamic
+        'decode-store $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-store (raw)
+            let
+                data $ data-map raw
+                normalized $ -> data
+                  assoc :session $ normalize-session $ .unwrap (get data :session)
+                  assoc :user $ normalize-optional-user $ .unwrap (get data :user)
+                  assoc :router $ normalize-optional-router-view $ .unwrap (get data :router)
+              decode-map-as normalized 'app.schema/Store
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
+            :args $ [] 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |serialized-nominal-patch-keeps-chat-store)
+            :code $ quote $ let
+                guest $ assoc session :id 7
+                before $ Store :logged-in? false :session guest :reel-length 0 :user (Option :none) :router (Option :none) :count-sessions 1
+                user $ UserView :id |u :name |Ada :nickname (Option :none) :avatar $ Option :none
+                message $ ChatMessage :id |m :text "|hello 🌸" :time 1000 :user-id $ Option :some |u
+                payload $ ChatroomData :users
+                  {} $ |u user
+                  , :messages $ {} (|m message)
+                route $ RouterView :name :chatroom :data payload
+                after $ Store :logged-in? true :session
+                  assoc guest :user-id $ Option :some |u
+                  , :reel-length 1 :user (Option :some user) :router (Option :some route) :count-sessions 1
+                changes $ diff-twig before after $ {} (:key :id)
+                wire-before $ parse-cirru-edn $ format-cirru-edn before
+                wire-changes $ decode-changes $ parse-cirru-edn (format-cirru-edn changes)
+                recovered $ match (try-patch-twig wire-before wire-changes)
+                  (:ok value) (decode-store value)
+                  (:err error)
+                    raise $ patch-error-message error
+              assert= before $ decode-store wire-before
+              assert= after recovered
+            :tags $ #{} :migration :unit
+        'encode-op $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn encode-op (op)
+            match op
+              (:message/send text) (:: :message/send text)
+              (:message/clear) (:: :message/clear)
+              (:session/connect) (:: :session/connect)
+              (:session/disconnect) (:: :session/disconnect)
+              (:session/remove-message id)
+                :: :session/remove-message $ {} $ :id id
+              (:user/log-in credentials) (:: :user/log-in credentials)
+              (:user/sign-up credentials) (:: :user/sign-up credentials)
+              (:user/log-out) (:: :user/log-out)
+              (:router/change route)
+                let
+                    data $ {}
+                      :name $ :name route
+                      :data $ :data route
+                      :router $ :router route
+                  :: :router/change $ .fold (:title route)
+                    fn () data
+                    fn (title) (assoc data :title title)
+              (:states cursor state) (:: :states cursor state)
+              (:effect/connect) (:: :effect/connect)
+              (:reel/reset) (:: :reel/reset)
+              (:reel/merge) (:: :reel/merge)
+              (:effect/persist) (:: :effect/persist)
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Enum)
+            :args $ [] 'app.schema/Op
+        'normalize-message $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-message (raw)
+            without-legacy-nil (data-map raw) :user-id
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
+        'normalize-optional-router-view $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-optional-router-view (raw)
+            if (nil? raw) (Option :none)
+              if (enum? raw)
+                match raw
+                  (:none) (Option :none)
+                  (:some value)
+                    Option :some $ normalize-router-view value
+                  _ $ raise |Invalid-optional-router
+                Option :some $ normalize-router-view raw
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Option $ :: 'Map 'Tag 'Dynamic
+        'normalize-optional-user $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-optional-user (raw)
+            if (nil? raw) (Option :none)
+              if (enum? raw)
+                match raw
+                  (:none) (Option :none)
+                  (:some value)
+                    Option :some $ normalize-user value
+                  _ $ raise |Invalid-optional-user
+                Option :some $ normalize-user raw
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Option $ :: 'Map 'Tag 'Dynamic
+        'normalize-router $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-router (raw)
+            without-legacy-nil
+              merge
+                {} (:name :chatroom) (:data nil) (:router nil)
+                data-map raw
+              , :title
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
+        'normalize-router-view $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-router-view (raw)
+            let
+                data $ data-map raw
+                payload $ data-map $ .unwrap (get data :data)
+                users $ decode-map-as
+                  .unwrap $ get payload :users
+                  :: 'Map 'String 'Dynamic
+                messages $ decode-map-as
+                  .unwrap $ get payload :messages
+                  :: 'Map 'String 'Dynamic
+                normalized $ -> payload
+                  assoc :users $ filter-map-kv users $ fn (id user)
+                    MapEntryDecision :keep id $ normalize-user user
+                  assoc :messages $ filter-map-kv messages $ fn (id message)
+                    MapEntryDecision :keep id $ normalize-message message
+              assoc data :data normalized
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
+        'normalize-session $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-session (raw)
+            let
+                data $ data-map raw
+                route $ .unwrap-or (get data :router)
+                  {} $ :name :chatroom
+              -> data (without-legacy-nil :user-id) (without-legacy-nil :nickname)
+                assoc :router $ normalize-router route
+                assoc :messages $ filter-map-kv
+                  decode-map-as
+                    .unwrap-or (get data :messages) ({})
+                    :: 'Map 'String 'Dynamic
+                  fn (id message)
+                    MapEntryDecision :keep id $ data-map message
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
+        'normalize-user $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn normalize-user (raw)
+            -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'Dynamic
+            :return $ :: 'Map 'Tag 'Dynamic
         'router $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def router
-            {} (:name nil) (:title nil)
-              :data $ {}
-              :router nil
+            Router :name :chatroom :title (Option :none) :data nil :router nil
           :examples $ []
           :schema $ :: 'Dynamic
         'session $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def session
-            {} (:user-id nil) (:id nil) (:nickname nil)
-              :router $ {} (:name :chatroom) (:data nil) (:router nil)
-              :messages $ {}
+            Session :id 0 :user-id (Option :none) :nickname (Option :none) :router router :messages $ {}
           :examples $ []
           :schema $ :: 'Dynamic
-        'user $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ def user
-            {} (:name nil) (:id nil) (:nickname nil) (:avatar nil) (:password nil)
+        'without-legacy-nil $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn without-legacy-nil (data key)
+            match
+              decode-optional-string $ .unwrap-or (get data key) nil
+              (:none) (dissoc data key)
+              (:some value) (assoc data key value)
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Fn $ {}
+            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Tag
+            :return $ :: 'Map 'Tag 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.schema
+          :require
+            recollect.diff :refer $ diff-twig
+            recollect.patch :refer $ try-patch-twig patch-error-message
+            recollect.schema :refer $ decode-changes
     'app.server $ %{} 'FileEntry
       :defs $ {}
         '*client-caches $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *client-caches ({})
+          :code $ quote $ defref *client-caches ({})
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref $ :: 'Map 'Number 'app.schema/Store
         '*initial-db $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *initial-db
-            if
-              path-exists? $ w-log storage-file
-              do (println "|Found local EDN data")
-                merge
-                  assert-type schema/database $ :: 'Map 'Tag 'Dynamic
-                  parse-database $ read-file storage-file
-              do (println "|Found no data") schema/database
+          :code $ quote $ defref *initial-db
+            if (path-exists? storage-file)
+              match
+                .read-text $ FsPath :value storage-file
+                (:ok content) (parse-database content)
+                (:err message) (raise message)
+              , schema/database
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref 'app.schema/Db
         '*reader-reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reader-reel @*reel
+          :code $ quote $ defref *reader-reel @*reel
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref $ :: 'cumulo-reel.core/ReelState 'app.schema/Db
         '*reel $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defatom *reel
-            struct-with reel-schema (:base @*initial-db) (:db @*initial-db)
+          :code $ quote $ defref *reel
+            ReelState :base @*initial-db :db @*initial-db :records ([]) :merged? false
           :examples $ []
-          :schema $ :: 'Dynamic
+          :schema $ :: 'Ref $ :: 'cumulo-reel.core/ReelState 'app.schema/Db
+        '*sync-pending? $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defref *sync-pending? false
+          :examples $ []
+          :schema $ :: 'Ref 'Bool
+        '*tasks $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defref *tasks ([])
+          :examples $ []
+          :schema $ :: 'Ref $ :: 'List 'FfiTask
+        'changes-for $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn changes-for (old next)
+            match old
+              (:none)
+                diff-twig nil next $ {} $ :key :id
+              (:some previous)
+                diff-twig previous next $ {} $ :key :id
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] (:: 'Option 'app.schema/Store) 'app.schema/Store
+            :return $ :: 'List 'recollect.schema/change-op
         'dispatch! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn dispatch! (op sid)
-            let
-                op-id $ generate-id!
-                op-time $ calcit.std.date/get-timestamp $ get-time!
-              if config/dev? $ println |Dispatch! (str op) sid
-              reset! *reel $ reel-reducer @*reel updater op sid op-id op-time config/dev?
+            match op
+              (:effect/persist)
+                when config/dev? $ persist-db!
+              _ $ when
+                or config/dev? $ match op
+                  (:reel/reset) false
+                  (:reel/merge) false
+                  _ true
+                let
+                    previous @*reel
+                    op-id $ generate-id!
+                    op-time $ get-timestamp $ get-time!
+                    next $ reel-reducer previous updater op sid op-id op-time config/dev?
+                  when config/dev? $ println |Dispatch! sid
+                  reset! *reel $ match op
+                    (:reel/reset)
+                      assoc next :db $ assoc (:db next) :sessions $ :sessions (:db previous)
+                    _ next
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Enum 'Number
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] 'app.schema/Op 'Number
         'get-backup-path! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn get-backup-path! ()
             let
                 now $ calcit.std.date/extract-time $ get-time!
               join-path calcit-dirname |backups
-                str $ app.schema/read-field now :month
-                str (app.schema/read-field now :day) |-snapshot.cirru
+                str $ option:unwrap $ get now :month
+                str
+                  option:unwrap $ get now :day
+                  , |-snapshot.cirru
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
             :args $ []
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
-            let
-                p? $ get-env |port
-                port $ .unwrap-or
-                  parse-float $ p? .unwrap-or $ str
-                    .unwrap-or (get config/site :port) 11001
-                  , 11001
-              run-server! port
-              println $ str "|Server started on port:" port
-            ; "|init it before doing multi-threading"
             identity @*reader-reel
-            set-interval 200 $ fn () $ render-loop!
-            set-interval 600000 $ fn () $ persist-db!
+            let
+                port $ .fold (get-env |port)
+                  fn () $ :port config/site
+                  fn (raw)
+                    .unwrap-or (parse-float raw) (:port config/site)
+                server $ run-server! port
+                render-timer $ set-interval! 200 $ fn () (render-loop!)
+                persist-timer $ set-interval! 600000 $ fn () (persist-db!)
+              reset! *tasks $ [] server render-timer persist-timer
+              println "|Server started on port:" port
             on-control-c on-exit!
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'on-exit! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn on-exit! () (persist-db!) (; println "|exit code is...") (quit! 0)
+          :code $ quote $ defn on-exit! ()
+            foldl @*tasks &unit $ fn (acc task) (.cancel! task)
+            reset! *tasks $ []
+            persist-db!
+            quit! 0
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'parse-database $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-database (content)
-            unsafe-coerce (parse-cirru-edn content) (:: 'Map 'Tag 'Dynamic)
+            schema/decode-database $ parse-cirru-edn content
           :examples $ []
-          :schema $ :: 'Fn $ {}
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
             :args $ [] 'String
-            :features $ #{} :js-ffi
-            :return $ :: 'Map 'Tag 'Dynamic
         'parse-op $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn parse-op (content)
-            unsafe-coerce (parse-cirru-edn content) 'Enum
+            schema/decode-op $ parse-cirru-edn content
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Enum)
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Op)
             :args $ [] 'String
-            :features $ #{} :js-ffi
         'persist-db! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn persist-db! ()
             let
-                file-content $ format-cirru-edn $ assoc (app.schema/read-field @*reel :db) :sessions ({})
-                storage-path storage-file
-                backup-path $ get-backup-path!
-              check-write-file! storage-path file-content
-              check-write-file! backup-path file-content
+                content $ format-cirru-edn $ assoc (:db @*reel) :sessions ({})
+              check-write-file! storage-file content
+              check-write-file! (get-backup-path!) content
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'reload! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn reload! () (println "|Code updated..")
-            if (not config/dev?) (raise "|reloading only happens in dev mode")
+          :code $ quote $ defn reload! ()
+            when (not config/dev?) (raise |Reloading-only-happens-in-dev-mode)
             clear-twig-caches!
             reset! *reader-reel @*reel
             sync-clients! @*reader-reel
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'render-loop! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn render-loop! ()
             when
-              not $ identical? @*reader-reel @*reel
+              or @*sync-pending? $ not $ identical? @*reader-reel @*reel
+              reset! *sync-pending? false
               reset! *reader-reel @*reel
               sync-clients! @*reader-reel
+            , &unit
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'Unit)
             :args $ []
         'run-server! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn run-server! (port)
-            wss-serve! (&{} :port port)
+            wss-serve!
+              {} $ :port port
               fn (data)
                 match data
                   (:connect sid)
-                    do
-                      dispatch! (:: :session/connect) sid
-                      println "|New client."
-                  (:message sid msg)
-                    let
-                        action $ parse-op msg
-                      dispatch! action sid
+                    dispatch! (schema/Op :session/connect) sid
+                  (:message sid content)
+                    try
+                      dispatch! (parse-op content) sid
+                      fn (error) (eprintln |Rejected-client-operation sid error) &unit
                   (:disconnect sid)
-                    do (println "|Client closed!")
-                      dispatch! (:: :session/disconnect) sid
-                  _ $ println "|unknown data:" data
+                    do (swap! *client-caches dissoc sid)
+                      dispatch! (schema/Op :session/disconnect) sid
+                  (:blob sid payload) (eprintln |Unsupported-binary-message sid)
+                , &unit
+              .unwrap-or (get-env |IMPATIENS_BIND_ADDRESS) |0.0.0.0
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
+          :schema $ :: 'Fn $ {} (:return 'FfiTask)
             :args $ [] 'Number
         'storage-file $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def storage-file
-            if (empty? calcit-dirname)
-              str calcit-dirname $ .unwrap-or (get config/site :storage-file) |impatiens.cirru
-              str calcit-dirname |/ $ .unwrap-or (get config/site :storage-file) |impatiens.cirru
+            if (empty? calcit-dirname) (:storage-file config/site)
+              str calcit-dirname |/ $ :storage-file config/site
           :examples $ []
           :schema $ :: 'Dynamic
-        'sync-clients! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn sync-clients! (reel)
-            wss-each! $ fn (sid)
-              let
-                  db $ app.schema/read-field reel :db
-                  records $ app.schema/read-field reel :records
-                  session $ .unwrap-or
-                    get-in db $ [] :sessions sid
-                    {}
-                  old-store $ .unwrap-or (get @*client-caches sid) nil
-                  new-store $ twig-container db session records
-                  changes $ diff-twig old-store new-store $ {} (:key :id)
-                ; when config/dev? $ println "|Changes for" sid |: changes $ count records
-                if
-                  not $ empty? changes
-                  do
-                    wss-send! sid $ format-cirru-edn $ :: :patch changes
-                    swap! *client-caches assoc sid new-store
+        'sync-client! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn sync-client! (sid reel)
+            when (identical? reel @*reader-reel)
+              match
+                get
+                  :sessions $ :db reel
+                  , sid
+                (:none) (swap! *client-caches dissoc sid)
+                (:some session)
+                  let
+                      next $ twig-container (:db reel) session $ :records reel
+                      changes $ changes-for (get @*client-caches sid) next
+                    when
+                      not $ empty? changes
+                      match
+                        wss-send! sid $ format-cirru-edn $ :: :patch changes
+                        (:accepted) (swap! *client-caches assoc sid next)
+                        (:backpressured) (reset! *sync-pending? true)
+                        (:closed) (swap! *client-caches dissoc sid)
+                        (:too-large) (eprintln |Patch-exceeds-WebSocket-message-limit sid)
+            , &unit
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'Unit)
-            :args $ [] 'Dynamic
+            :args $ [] 'Number $ :: 'cumulo-reel.core/ReelState 'app.schema/Db
+        'sync-clients! $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn sync-clients! (reel)
+            wss-each! $ fn (sid) (sync-client! sid reel)
+            , &unit
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'Unit)
+            :args $ [] $ :: 'cumulo-reel.core/ReelState 'app.schema/Db
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.server
           :require (app.schema :as schema)
             app.updater :refer $ updater
-            cumulo-reel.core :refer $ reel-reducer refresh-reel reel-schema
+            cumulo-reel.core :refer $ ReelState reel-reducer
             app.config :as config
             app.twig.container :refer $ twig-container
             recollect.diff :refer $ diff-twig
@@ -825,8 +1324,8 @@
             recollect.twig :refer $ clear-twig-caches!
             app.$meta :refer $ calcit-dirname
             calcit.std.fs :refer $ path-exists? check-write-file!
-            calcit.std.time :refer $ set-interval
-            calcit.std.date :refer $ Date get-time!
+            calcit.std.time :refer $ set-interval!
+            calcit.std.date :refer $ get-time! get-timestamp extract-time
             calcit.std.path :refer $ join-path
     'app.style $ %{} 'FileEntry
       :defs $ {} $ 'button
@@ -841,51 +1340,67 @@
           :schema $ :: 'Dynamic
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.style
-          :require ([] respo-ui.core :as ui)
-            [] respo-ui.core :refer $ [] hsl
+          :require (respo-ui.core :as ui)
+            respo-ui.core :refer $ hsl
     'app.twig.container $ %{} 'FileEntry
       :defs $ {} $ 'twig-container
         %{} 'CodeEntry (:doc |)
           :code $ quote $ defn twig-container (db session records)
             let
-                user-id $ app.schema/read-field session :user-id
-                logged-in? $ some? user-id
-                router $ app.schema/read-field session :router
-                base-data $ {} (:logged-in? logged-in?) (:session session)
-                  :reel-length $ count records
-              merge
-                assert-type base-data $ :: 'Map 'Tag 'Dynamic
-                assert-type
-                  if logged-in?
-                    {}
-                      :user $ twig-user $
-                        get-in db $ [] :users user-id
-                        , .unwrap-or ({})
-                      :router $ case-default (app.schema/read-field router :name) router (:profile router)
-                        :chatroom $ assoc router :data $ {}
-                          :users $ app.schema/read-field db :users
-                          :messages $ app.schema/read-field db :messages
-                      :count-sessions $ count $ app.schema/read-field db :sessions
-                    {}
-                  :: 'Map 'Tag 'Dynamic
+                maybe-user $ match (:user-id session)
+                  (:none) (Option :none)
+                  (:some id)
+                    get (:users db) id
+                user-view $ .map maybe-user $ fn (user) (twig-user user)
+                route $ :router session
+                route-view $ .map maybe-user $ fn (user)
+                  schema/RouterView :name (:name route) :data $ schema/ChatroomData :users
+                    if
+                      = :chatroom $ :name route
+                      filter-map-kv (:users db)
+                        fn (id member)
+                          MapEntryDecision :keep id $ twig-user member
+                      {}
+                    , :messages $ if
+                      = :chatroom $ :name route
+                      :messages db
+                      {}
+              schema/Store :logged-in? (.some? maybe-user) :session session :reel-length (count records) :user user-view :router route-view :count-sessions $ count $ :sessions db
           :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'Dynamic 'Dynamic 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
+            :args $ [] 'app.schema/Db 'app.schema/Session $ :: 'List 'Dynamic
+          :tests $ [] $ %{} 'TestEntry (:name |projection-never-exposes-account-passwords)
+            :code $ quote $ let
+                user $ schema/User :id |u :name |Ada :nickname (Option :some |Ada) :avatar (Option :none) :password |hash
+                session $ assoc (assoc schema/session :id 7) :user-id $ Option :some |u
+                db $ assoc
+                  assoc schema/database :users $ {} $ |u user
+                  , :sessions $ {} (7 session)
+                store $ twig-container db session $ []
+                expected $ schema/UserView :id |u :name |Ada :nickname (Option :some |Ada) :avatar $ Option :none
+                route $ .unwrap $ :router store
+              assert= true $ :logged-in? store
+              assert= 1 $ :count-sessions store
+              assert= expected $ .unwrap $ :user store
+              assert= expected $ .unwrap $ get
+                :users $ :data route
+                , |u
+            :tags $ #{} :migration :unit
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.twig.container
-          :require
-            [] app.twig.user :refer $ [] twig-user
-            [] app.schema :as app.schema
+          :require (app.schema :as schema)
+            app.twig.user :refer $ twig-user
     'app.twig.user $ %{} 'FileEntry
       :defs $ {} $ 'twig-user
         %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn twig-user (user) (dissoc user :password)
+          :code $ quote $ defn twig-user (user)
+            schema/UserView :id (:id user) :name (:name user) :nickname (:nickname user) :avatar $ :avatar user
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] $ :: 'Map 'Tag 'Dynamic
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/UserView)
+            :args $ [] 'app.schema/User
       :ns $ %{} 'NsEntry (:doc |)
-        :code $ quote $ ns app.twig.user (:require)
+        :code $ quote $ ns app.twig.user
+          :require $ app.schema :as schema
     'app.updater $ %{} 'FileEntry
       :defs $ {} $ 'updater
         %{} 'CodeEntry (:doc |)
@@ -893,174 +1408,195 @@
             match op
               (:session/connect) (session/connect db sid op-id op-time)
               (:session/disconnect) (session/disconnect db sid op-id op-time)
-              (:user/log-in op-data) (user/log-in db op-data sid op-id op-time)
-              (:user/sign-up op-data) (user/sign-up db op-data sid op-id op-time)
-              (:user/log-out op-data) (user/log-out db op-data sid op-id op-time)
-              (:session/remove-message op-data) (session/remove-message db op-data sid op-id op-time)
-              (:router/change op-data) (router/change db op-data sid op-id op-time)
-              (:message/send op-data) (message/send db op-data sid op-id op-time)
-              (:message/clear op-data) (message/clear db op-data sid op-id op-time)
-              _ $ do (eprintln "|Unknown op:" op) db
+              (:session/remove-message id) (session/remove-message db id sid op-id op-time)
+              (:user/log-in credentials) (user/log-in db credentials sid op-id op-time)
+              (:user/sign-up credentials) (user/sign-up db credentials sid op-id op-time)
+              (:user/log-out) (user/log-out db sid op-id op-time)
+              (:router/change route) (router/change db route sid op-id op-time)
+              (:states cursor state) db
+              (:effect/connect) db
+              (:reel/reset) db
+              (:reel/merge) db
+              (:effect/persist) db
+              (:message/send text) (message/send db text sid op-id op-time)
+              (:message/clear) (message/clear db sid op-id op-time)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Enum 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'app.schema/Op 'Number 'String 'Number
+          :tests $ []
+            %{} 'TestEntry (:name |signup-login-logout-and-private-password)
+              :code $ quote $ let
+                  connected $ updater schema/database (schema/Op :session/connect) 7 |connect 1
+                  registered $ updater connected
+                    schema/Op :user/sign-up $ [] |Ada |secret
+                    , 7 |u 2
+                  logged-out $ updater registered (schema/Op :user/log-out) 7 |logout 3
+                  wrong $ updater logged-out
+                    schema/Op :user/log-in $ [] |Ada |wrong
+                    , 7 |wrong 4
+                  logged-in $ updater wrong
+                    schema/Op :user/log-in $ [] |Ada |secret
+                    , 7 |login 5
+                assert= (Option :some |u)
+                  :user-id $ .unwrap $ get (:sessions registered) 7
+                assert= (Option :none)
+                  :user-id $ .unwrap $ get (:sessions logged-out) 7
+                assert= (Option :none)
+                  :user-id $ .unwrap $ get (:sessions wrong) 7
+                assert= 1 $ count $ :messages
+                  .unwrap $ get (:sessions wrong) 7
+                assert= (Option :some |u)
+                  :user-id $ .unwrap $ get (:sessions logged-in) 7
+              :tags $ #{} :migration :unit
+            %{} 'TestEntry (:name |chat-message-clear-and-session-lifecycle)
+              :code $ quote $ let
+                  connected $ updater schema/database (schema/Op :session/connect) 7 |connect 1
+                  registered $ updater connected
+                    schema/Op :user/sign-up $ [] |Ada |secret
+                    , 7 |u 2
+                  sent $ updater registered (schema/Op :message/send "|hello 🌸") 7 |m 1000
+                  message $ .unwrap $ get (:messages sent) |m
+                  cleared $ updater sent (schema/Op :message/clear) 7 |clear 1001
+                  disconnected $ updater cleared (schema/Op :session/disconnect) 7 |disconnect 1002
+                assert= "|hello 🌸" $ :text message
+                assert= 1000 $ :time message
+                assert= (Option :some |u) (:user-id message)
+                assert= ({}) (:messages cleared)
+                assert= ({}) (:sessions disconnected)
+              :tags $ #{} :migration :unit
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater
-          :require ([] app.updater.session :as session) ([] app.updater.user :as user) ([] app.updater.router :as router) ([] app.updater.message :as message)
+          :require (app.updater.session :as session) (app.updater.user :as user) (app.updater.router :as router) (app.updater.message :as message) (app.schema :as schema)
     'app.updater.message $ %{} 'FileEntry
       :defs $ {}
         'clear $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn clear (db op-data sid op-id op-time)
+          :code $ quote $ defn clear (db sid op-id op-time)
             assoc db :messages $ {}
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'Number 'String 'Number
         'send $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn send (db op-data sid op-id op-time)
-            assoc-in db ([] :messages op-id)
-              {} (:id op-id) (:text op-data) (:time op-time)
-                :user-id $ get-in db $ [] :sessions sid :user-id
+          :code $ quote $ defn send (db text sid op-id op-time)
+            match
+              get (:sessions db) sid
+              (:some session)
+                assoc db :messages $ assoc (:messages db) op-id $ schema/ChatMessage :id op-id :text text :time op-time :user-id (:user-id session)
+              (:none) db
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'String 'Number 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater.message
+          :require $ app.schema :as schema
     'app.updater.router $ %{} 'FileEntry
       :defs $ {} $ 'change
         %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn change (db op-data session-id op-id op-time)
-            assoc-in db ([] :sessions session-id :router) op-data
+          :code $ quote $ defn change (db route sid op-id op-time)
+            session/update-session db sid $ fn (current) (assoc current :router route)
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'app.schema/Router 'Number 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater.router
+          :require $ app.updater.session :as session
     'app.updater.session $ %{} 'FileEntry
       :defs $ {}
+        'add-message $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn add-message (db sid id text)
+            update-session db sid $ fn (session)
+              assoc session :messages $ assoc (:messages session) id $ schema/Message :id id :text text
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'Number 'String 'String
         'connect $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn connect (db session-id op-id op-time)
-            assoc-in db ([] :sessions session-id)
-              merge schema/session $ {} $ :id session-id
+          :code $ quote $ defn connect (db sid op-id op-time)
+            assoc db :sessions $ assoc (:sessions db) sid $ assoc schema/session :id sid
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'Number 'String 'Number
         'disconnect $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn disconnect (db session-id op-id op-time)
-            update db :sessions $ fn (session) (dissoc session session-id)
+          :code $ quote $ defn disconnect (db sid op-id op-time)
+            assoc db :sessions $ dissoc (:sessions db) sid
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'Number 'String 'Number
         'remove-message $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn remove-message (db op-data sid op-id op-time)
-            update-in db ([] :sessions sid :messages)
-              fn (messages)
-                dissoc
-                  messages .unwrap-or $ {}
-                  app.schema/read-field op-data :id
+          :code $ quote $ defn remove-message (db message-id sid op-id op-time)
+            update-session db sid $ fn (session)
+              assoc session :messages $ dissoc (:messages session) message-id
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'String 'Number 'String 'Number
+        'update-session $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn update-session (db sid f)
+            match
+              get (:sessions db) sid
+              (:some session)
+                assoc db :sessions $ assoc (:sessions db) sid $ f session
+              (:none) db
+          :examples $ []
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'Number $ :: 'Fn
+              {} (:return 'app.schema/Session)
+                :args $ [] 'app.schema/Session
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater.session
-          :require $ [] app.schema :as schema
+          :require $ app.schema :as schema
     'app.updater.user $ %{} 'FileEntry
       :defs $ {}
+        'find-user $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn find-user (db username)
+            find
+              map-list-kv (:users db)
+                fn (id user) user
+              fn (user)
+                = username $ :name user
+          :examples $ []
+          :schema $ :: 'Fn $ {}
+            :args $ [] 'app.schema/Db 'String
+            :return $ :: 'Option 'app.schema/User
         'log-in $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn log-in (db op-data sid op-id op-time)
-            let-sugar
-                  [] username password
-                  , op-data
-                maybe-user $ -> (app.schema/read-field db :users) (vals) (.to-list)
-                  find $ fn (user)
-                    = username $ assert-type (app.schema/read-field user :name) 'String
-              update-in db ([] :sessions sid)
-                fn (session)
-                  let
-                      session-data $ session .unwrap-or schema/session
-                    if (option:some? maybe-user)
-                      let
-                          user $ maybe-user .unwrap
-                        if
-                          = (md5 password)
-                            assert-type (app.schema/read-field user :password) 'String
-                          assoc session-data :user-id $ app.schema/read-field user :id
-                          update session-data :messages $ fn (messages)
-                            assoc
-                              if (map? messages) messages $ {}
-                              , op-id $ {} (:id op-id)
-                                :text $ str "|Wrong password for " username
-                      update session-data :messages $ fn (messages)
-                        assoc
-                          if (map? messages) messages $ {}
-                          , op-id $ {} (:id op-id)
-                            :text $ str "|No user named: " username
+          :code $ quote $ defn log-in (db credentials sid op-id op-time)
+            let
+                username $ .unwrap $ nth credentials 0
+                password $ .unwrap $ nth credentials 1
+              match (find-user db username)
+                (:some user)
+                  if
+                    = (md5 password) (:password user)
+                    session/update-session db sid $ fn (current)
+                      assoc current :user-id $ Option :some $ :id user
+                    session/add-message db sid op-id $ str "|Wrong password for " username
+                (:none)
+                  session/add-message db sid op-id $ str "|No user named: " username
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db (:: 'List 'String) 'Number 'String 'Number
         'log-out $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn log-out (db op-data session-id op-id op-time)
-            assoc-in db ([] :sessions session-id :user-id) nil
+          :code $ quote $ defn log-out (db sid op-id op-time)
+            session/update-session db sid $ fn (current)
+              assoc current :user-id $ Option :none
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db 'Number 'String 'Number
         'sign-up $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn sign-up (db op-data sid op-id op-time)
-            let-sugar
-                  [] username password
-                  , op-data
-                maybe-user $ find
-                  -> (app.schema/read-field db :users) (vals) (.to-list)
-                  fn (user)
-                    = username $ assert-type (app.schema/read-field user :name) 'String
-              if (option:some? maybe-user)
-                update-in db ([] :sessions sid :messages)
-                  fn (messages)
-                    assoc
-                      messages .unwrap-or $ {}
-                      , op-id $ {} (:id op-id)
-                        :text $ str "|Name is taken: " username
-                -> db
-                  assoc-in ([] :sessions sid :user-id) op-id
-                  assoc-in ([] :users op-id)
-                    {} (:id op-id) (:name username) (:nickname username)
-                      :password $ md5 password
-                      :avatar nil
+          :code $ quote $ defn sign-up (db credentials sid op-id op-time)
+            let
+                username $ .unwrap $ nth credentials 0
+                password $ .unwrap $ nth credentials 1
+              match (find-user db username)
+                (:some user)
+                  session/add-message db sid op-id $ str "|Name is taken: " username
+                (:none)
+                  let
+                      new-user $ schema/User :id op-id :name username :nickname (Option :some username) :avatar (Option :none) :password $ md5 password
+                      next-db $ assoc db :users $ assoc (:users db) op-id new-user
+                    session/update-session next-db sid $ fn (current)
+                      assoc current :user-id $ Option :some op-id
           :examples $ []
-          :schema $ :: 'Fn $ {}
-            :args $ [] (:: 'Map 'Tag 'Dynamic) 'Dynamic 'Number 'String 'Number
-            :return $ :: 'Map 'Tag 'Dynamic
+          :schema $ :: 'Fn $ {} (:return 'app.schema/Db)
+            :args $ [] 'app.schema/Db (:: 'List 'String) 'Number 'String 'Number
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater.user
-          :require
-            [] app.util :refer $ [] find-first
+          :require (app.schema :as schema) (app.updater.session :as session)
             calcit.std.hash :refer $ md5
-            [] app.schema :as app.schema
-            [] app.schema :as schema
-    'app.util $ %{} 'FileEntry
-      :defs $ {}
-        'ProcessHost $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ deftrait ProcessHost (:env 'JsObject)
-          :examples $ []
-          :ffi $ {} (:backend :js) (:kind :external-object)
-          :schema $ :: 'Trait
-        'get-env! $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn get-env! (property)
-            let
-                process $ unsafe-coerce js/process 'app.util/ProcessHost
-                env $ .-env process
-              aget env property
-          :examples $ []
-          :schema $ :: 'Fn $ {} (:return 'Dynamic)
-            :args $ [] 'String
-            :features $ #{} :js-ffi
-      :ns $ %{} 'NsEntry (:doc |)
-        :code $ quote $ ns app.util
