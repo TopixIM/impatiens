@@ -29,7 +29,7 @@ jobs:
 
       - uses: calcit-lang/setup-calcit@v1.5.0
         with:
-          version: "0.27.0"
+          version: "0.30.1-alpha.5"
           tools: calcit,caps
           caps-version: "0.1.1"
 
@@ -38,11 +38,9 @@ jobs:
           corepack enable
           corepack prepare yarn@4.18.0 --activate
 
-      # Current Respo modules still request preceding compatible releases, so
-      # strict Caps resolution rejects the highest SemVer set selected here.
       - name: Install and validate dependencies
         run: |
-          caps --ci
+          caps --strict --ci
           yarn install --immutable
           caps verify --toolchain
 
@@ -53,8 +51,31 @@ jobs:
           git diff --exit-code -- calcit.cirru
           calcit calcit.cirru --check-only
           calcit calcit.cirru --entry server --check-only
-          calcit analyze check-public --ns app.client --ns app.comp.chatroom --ns app.comp.container --ns app.comp.header --ns app.comp.login --ns app.comp.profile --ns app.config --ns app.schema --ns app.style --ns app.util
-          calcit --entry server analyze check-public --ns 'app.$meta' --ns app.config --ns app.schema --ns app.server --ns app.twig.container --ns app.twig.user --ns app.updater --ns app.updater.message --ns app.updater.router --ns app.updater.session --ns app.updater.user --ns app.util
+          calcit --check-only --ns app.browser --ns app.client --ns app.comp.chatroom --ns app.comp.container --ns app.comp.header --ns app.comp.login --ns app.comp.profile --ns app.config --ns app.schema --ns app.style --summary-only --format json
+          calcit --entry server --check-only --ns 'app.$meta' --ns app.config --ns app.schema --ns app.server --ns app.twig.container --ns app.twig.user --ns app.updater --ns app.updater.message --ns app.updater.router --ns app.updater.session --ns app.updater.user --summary-only --format json
+          calcit --entry server test --require-match --summary-only --format json
+
+      - name: Load released shared test runner
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: calcit-lang/calcit
+          ref: 0.30.1-alpha.5
+          path: .calcit/core-test-tools
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/run-core-tests.mjs
+            /scripts/core-test-protocol.mjs
+            /scripts/core-tests-exclusions.cirru
+            /docs/installation/wasm-support.md
+
+      - name: Replay portable data contracts on native and JavaScript
+        run: |
+          export CALCIT_BIN="$(command -v calcit)"
+          node .calcit/core-test-tools/scripts/run-core-tests.mjs \
+            --snapshot calcit.cirru --entry default --target app.schema --backend native,js \
+            --exclusions .calcit/core-test-tools/scripts/core-tests-exclusions.cirru \
+            --support-matrix .calcit/core-test-tools/docs/installation/wasm-support.md
 
       - name: Build client with CDN asset URLs
         id: asset-path
@@ -74,6 +95,16 @@ jobs:
           echo "prefix=${asset_prefix}" >> "$GITHUB_OUTPUT"
           echo "base-url=${VITE_BASE_URL}" >> "$GITHUB_OUTPUT"
           yarn compile-page
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { DateTime } from 'luxon';
+          import { format_message_time } from './js-out/app.comp.chatroom.mjs';
+          for (const time of [0, Date.now()]) {
+            const date = DateTime.fromMillis(time);
+            const pattern = DateTime.local().hasSame(date, 'day') ? 'HH:mm' : 'MM-dd HH:mm';
+            assert.equal(format_message_time(time), date.toFormat(pattern));
+          }
+          JS
           yarn release-page
 
       - run: mkdir -p dist-server && cp calcit.cirru dist-server && cp deps.cirru package.json dist-server/
