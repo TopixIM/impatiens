@@ -47,8 +47,9 @@ jobs:
       - name: Validate Calcit snapshot and types
         run: |
           calcit calcit.cirru fix --workflow strict --verify --format edn
+          source_blob="$(git hash-object calcit.cirru)"
           calcit calcit.cirru edit format
-          git diff --exit-code -- calcit.cirru
+          test "$(git hash-object calcit.cirru)" = "$source_blob"
           calcit calcit.cirru --check-only
           calcit calcit.cirru --entry server --check-only
           calcit --check-only --ns app.browser --ns app.client --ns app.comp.chatroom --ns app.comp.container --ns app.comp.header --ns app.comp.login --ns app.comp.profile --ns app.config --ns app.schema --ns app.style --summary-only --format json
