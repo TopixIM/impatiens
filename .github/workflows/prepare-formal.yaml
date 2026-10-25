@@ -1,0 +1,98 @@
+name: Protected Impatiens formal dependency preparation
+on:
+  push:
+    branches: [prepare/impatiens-formal-0301]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6.5.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: calcit-lang/setup-calcit@v1.5.0
+        with:
+          tools: calcit,caps
+          caps-version: "0.1.1"
+          deps-file: deps.cirru
+      - run: |
+          set -euo pipefail
+          corepack enable
+          corepack prepare yarn@4.18.0 --activate
+          caps --strict --ci
+          YARN_ENABLE_IMMUTABLE_INSTALLS=false yarn install
+          yarn install --immutable
+          caps verify --toolchain
+          mkdir -p acceptance
+          node prepare-formal.mjs
+      - name: Original strict, canonical, entry, namespace and native test gates
+        run: |
+          set -euo pipefail
+          calcit calcit.cirru fix --workflow strict --verify --format json | tee acceptance/strict.json
+          before_blob="$(git hash-object calcit.cirru)"
+          calcit calcit.cirru edit format
+          test "$(git hash-object calcit.cirru)" = "$before_blob"
+          calcit calcit.cirru --check-only
+          calcit calcit.cirru --entry server --check-only
+          calcit --check-only --ns app.browser --ns app.client --ns app.comp.chatroom --ns app.comp.container --ns app.comp.header --ns app.comp.login --ns app.comp.profile --ns app.config --ns app.schema --ns app.style --summary-only --format json | tee acceptance/browser.json
+          calcit --entry server --check-only --ns 'app.$meta' --ns app.config --ns app.schema --ns app.server --ns app.twig.container --ns app.twig.user --ns app.updater --ns app.updater.message --ns app.updater.router --ns app.updater.session --ns app.updater.user --summary-only --format json | tee acceptance/server.json
+          calcit --entry server test --require-match --summary-only --format json | tee acceptance/native.json
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: calcit-lang/calcit
+          ref: 0.30.1
+          path: .calcit/core-test-tools
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /scripts/run-core-tests.mjs
+            /scripts/core-test-protocol.mjs
+            /scripts/core-tests-exclusions.cirru
+            /docs/installation/wasm-support.md
+      - name: Original portable native and JS replay
+        run: |
+          set -euo pipefail
+          export CALCIT_BIN="$(command -v calcit)"
+          node .calcit/core-test-tools/scripts/run-core-tests.mjs \
+            --snapshot calcit.cirru --entry default --target app.schema --backend native,js \
+            --exclusions .calcit/core-test-tools/scripts/core-tests-exclusions.cirru \
+            --support-matrix .calcit/core-test-tools/docs/installation/wasm-support.md \
+            --results-json acceptance/shared.json 2>&1 | tee acceptance/shared.log
+      - name: Original frontend compilation, real date adapter and Vite build
+        env:
+          VITE_BASE_URL: ./
+        run: |
+          set -euo pipefail
+          yarn compile-page
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { DateTime } from 'luxon';
+          import { format_message_time } from './js-out/app.comp.chatroom.mjs';
+          for (const time of [0, Date.now()]) {
+            const date = DateTime.fromMillis(time);
+            const pattern = DateTime.local().hasSame(date, 'day') ? 'HH:mm' : 'MM-dd HH:mm';
+            assert.equal(format_message_time(time), date.toFormat(pattern));
+          }
+          JS
+          yarn release-page
+          node prepare-formal.mjs
+      - uses: actions/upload-artifact@v7.0.2
+        if: success()
+        with:
+          name: impatiens-formal-accepted-lock
+          path: yarn.lock
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: impatiens-formal-diagnostics
+          path: acceptance
+          if-no-files-found: error
+          retention-days: 30
