@@ -745,7 +745,7 @@
             let
                 credentials $ decode-map-as raw $ :: 'List 'String
               if
-                = 2 $ count credentials
+                = 2 $ .len credentials
                 , credentials $ raise "|Expected two credential strings"
           :examples $ []
           :schema $ :: 'Fn $ {}
@@ -1151,9 +1151,9 @@
             let
                 now $ calcit.std.date/extract-time $ get-time!
               join-path calcit-dirname |backups
-                str $ option:unwrap $ get now :month
+                str $ .unwrap $ get now :month
                 str
-                  option:unwrap $ get now :day
+                  .unwrap $ get now :day
                   , |-snapshot.cirru
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'String)
@@ -1179,7 +1179,11 @@
             :args $ []
         'on-exit! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-exit! ()
-            foldl @*tasks &unit $ fn (acc task) (.cancel! task)
+            .foldl @*tasks &unit $ fn (acc task)
+              hint-fn $ {}
+                :args $ [] 'Unit 'calcit.core/FfiTask
+                :return 'Unit
+              .cancel! task
             reset! *tasks $ []
             persist-db!
             quit! 0
@@ -1341,7 +1345,7 @@
                       = :chatroom $ :name route
                       :messages db
                       {}
-              schema/Store :logged-in? (.some? maybe-user) :session session :reel-length (count records) :user user-view :router route-view :count-sessions $ count $ :sessions db
+              schema/Store :logged-in? (.some? maybe-user) :session session :reel-length (.len records) :user user-view :router route-view :count-sessions $ .len $ :sessions db
           :examples $ []
           :schema $ :: 'Fn $ {} (:return 'app.schema/Store)
             :args $ [] 'app.schema/Db 'app.schema/Session $ :: 'List 'Dynamic
@@ -1419,7 +1423,7 @@
                   :user-id $ .unwrap $ get (:sessions logged-out) 7
                 assert= (Option :none)
                   :user-id $ .unwrap $ get (:sessions wrong) 7
-                assert= 1 $ count $ :messages
+                assert= 1 $ .len $ :messages
                   .unwrap $ get (:sessions wrong) 7
                 assert= (Option :some |u)
                   :user-id $ .unwrap $ get (:sessions logged-in) 7
