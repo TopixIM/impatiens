@@ -545,9 +545,9 @@
               hint-fn $ Fn respo.schema/RespoEvent
                 Fn app.schema/ClientOp $ -> Unit
                 -> Unit
-              dispatch! $ if signup?
-                app.schema/Op :user/sign-up $ [] username password
-                app.schema/Op :user/log-in $ [] username password
+              let
+                  credentials $ app.schema/Credentials :username username :password password
+                dispatch! $ if signup? (app.schema/Op :user/sign-up credentials) (app.schema/Op :user/log-in credentials)
               browser/storage-set! (:storage-key config/site)
                 format-cirru-edn $ [] username password
           :examples $ []
@@ -644,6 +644,10 @@
           :code $ quote $ defunion ClientOp Op DraftOp
           :examples $ []
           :schema $ quote UnionDef
+        'Credentials $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defstruct Credentials (:username String) (:password String)
+          :examples $ []
+          :schema $ quote StructDef
         'Db $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defstruct Db
             :sessions $ Map Number app.schema/Session
@@ -673,13 +677,7 @@
           :examples $ []
           :schema $ quote StructDef
         'Op $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defenum Op (:session/connect) (:session/disconnect) (:session/remove-message String)
-            :user/log-in $ List String
-            :user/sign-up $ List String
-            :user/log-out
-            :router/change app.schema/Router
-            :message/send String
-            :message/clear
+          :code $ quote $ defenum Op (:session/connect) (:session/disconnect) (:session/remove-message String) (:user/log-in app.schema/Credentials) (:user/sign-up app.schema/Credentials) (:user/log-out) (:router/change app.schema/Router) (:message/send String) (:message/clear)
             :states (List Dynamic) Dynamic
             :effect/connect
             :reel/reset
@@ -749,10 +747,12 @@
                 credentials $ decode-map-as raw $ List String
               if
                 = 2 $ .len credentials
-                , credentials $ raise "|Expected two credential strings"
+                Credentials :username
+                  .unwrap $ nth credentials 0
+                  , :password $ .unwrap $ nth credentials 1
+                raise "|Expected two credential strings"
           :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ List String
+          :schema $ quote $ Fn Dynamic (-> app.schema/Credentials)
         'decode-database $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-database (raw)
             let
@@ -875,6 +875,14 @@
                   decode-op $ :: :user/log-in $ [] |Ada
                   , false
                 fn (error) true
+              assert=
+                :: :user/log-in $ [] |fixture-user |fixture-pass
+                encode-op $ decode-op $ parse-cirru-edn
+                  format-cirru-edn $ :: :user/log-in $ [] |fixture-user |fixture-pass
+              assert=
+                :: :user/sign-up $ [] |fixture-user |fixture-pass
+                encode-op $ decode-op $ parse-cirru-edn
+                  format-cirru-edn $ :: :user/sign-up $ [] |fixture-user |fixture-pass
             :tags $ #{} :migration :unit
         'decode-optional-string $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-optional-string (raw)
@@ -937,8 +945,10 @@
               (:session/disconnect) (:: :session/disconnect)
               (:session/remove-message id)
                 :: :session/remove-message $ {} $ :id id
-              (:user/log-in credentials) (:: :user/log-in credentials)
-              (:user/sign-up credentials) (:: :user/sign-up credentials)
+              (:user/log-in credentials)
+                :: :user/log-in $ [] (:username credentials) (:password credentials)
+              (:user/sign-up credentials)
+                :: :user/sign-up $ [] (:username credentials) (:password credentials)
               (:user/log-out) (:: :user/log-out)
               (:router/change route)
                 let
@@ -1378,14 +1388,14 @@
               :code $ quote $ let
                   connected $ updater schema/database (schema/Op :session/connect) 7 |connect 1
                   registered $ updater connected
-                    schema/Op :user/sign-up $ [] |Ada |secret
+                    schema/decode-op $ :: :user/sign-up $ [] |Ada |secret
                     , 7 |u 2
                   logged-out $ updater registered (schema/Op :user/log-out) 7 |logout 3
                   wrong $ updater logged-out
-                    schema/Op :user/log-in $ [] |Ada |wrong
+                    schema/decode-op $ :: :user/log-in $ [] |Ada |wrong
                     , 7 |wrong 4
                   logged-in $ updater wrong
-                    schema/Op :user/log-in $ [] |Ada |secret
+                    schema/decode-op $ :: :user/log-in $ [] |Ada |secret
                     , 7 |login 5
                 assert= (Option :some |u)
                   :user-id $ .unwrap $ get (:sessions registered) 7
@@ -1402,7 +1412,7 @@
               :code $ quote $ let
                   connected $ updater schema/database (schema/Op :session/connect) 7 |connect 1
                   registered $ updater connected
-                    schema/Op :user/sign-up $ [] |Ada |secret
+                    schema/decode-op $ :: :user/sign-up $ [] |Ada |secret
                     , 7 |u 2
                   sent $ updater registered (schema/Op :message/send "|hello 🌸") 7 |m 1000
                   message $ .unwrap $ get (:messages sent) |m
@@ -1499,8 +1509,8 @@
         'log-in $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn log-in (db credentials sid op-id op-time)
             let
-                username $ .unwrap $ nth credentials 0
-                password $ .unwrap $ nth credentials 1
+                username $ :username credentials
+                password $ :password credentials
               match (find-user db username)
                 (:some user)
                   if
@@ -1511,7 +1521,7 @@
                 (:none)
                   session/add-message db sid op-id $ str "|No user named: " username
           :examples $ []
-          :schema $ quote $ Fn app.schema/Db (List String) Number String Number (-> app.schema/Db)
+          :schema $ quote $ Fn app.schema/Db app.schema/Credentials Number String Number (-> app.schema/Db)
         'log-out $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn log-out (db sid op-id op-time)
             session/update-session db sid $ fn (current)
@@ -1521,8 +1531,8 @@
         'sign-up $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn sign-up (db credentials sid op-id op-time)
             let
-                username $ .unwrap $ nth credentials 0
-                password $ .unwrap $ nth credentials 1
+                username $ :username credentials
+                password $ :password credentials
               match (find-user db username)
                 (:some user)
                   session/add-message db sid op-id $ str "|Name is taken: " username
@@ -1533,7 +1543,7 @@
                     session/update-session next-db sid $ fn (current)
                       assoc current :user-id $ Option :some op-id
           :examples $ []
-          :schema $ quote $ Fn app.schema/Db (List String) Number String Number (-> app.schema/Db)
+          :schema $ quote $ Fn app.schema/Db app.schema/Credentials Number String Number (-> app.schema/Db)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.updater.user
           :require (app.schema :as schema) (app.updater.session :as session)
