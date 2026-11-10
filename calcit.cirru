@@ -744,13 +744,8 @@
         'decode-credentials $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-credentials (raw)
             let
-                credentials $ decode-map-as raw $ List String
-              if
-                = 2 $ .len credentials
-                Credentials :username
-                  .unwrap $ nth credentials 0
-                  , :password $ .unwrap $ nth credentials 1
-                raise "|Expected two credential strings"
+                credentials $ decode-map-as raw $ Tuple String String
+              let[] (username password) credentials $ Credentials :username username :password password
           :examples $ []
           :schema $ quote $ Fn Dynamic (-> app.schema/Credentials)
         'decode-database $ %{} 'CodeEntry (:doc |)
@@ -936,7 +931,8 @@
               assert= before $ decode-store wire-before
               assert= after recovered
             :tags $ #{} :migration :unit
-        'encode-op $ %{} 'CodeEntry (:doc |)
+        'encode-op $ %{} 'CodeEntry
+          :doc "|Legacy WebSocket encoding intentionally produces anonymous Cirru EDN enum values."
           :code $ quote $ defn encode-op (op)
             match op
               (:message/send text) (:: :message/send text)
@@ -965,7 +961,7 @@
               (:reel/merge) (:: :reel/merge)
               (:effect/persist) (:: :effect/persist)
           :examples $ []
-          :schema $ quote $ Fn app.schema/Op (-> AnyEnum)
+          :schema $ quote $ Fn app.schema/Op (-> AnyEnum) (:open :reflect)
         'normalize-message $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-message (raw)
             without-legacy-nil (data-map raw) :user-id
