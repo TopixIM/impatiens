@@ -469,12 +469,12 @@
           :code $ quote $ def style-logo
             {} $ :cursor :pointer
           :examples $ []
-          :schema $ quote Dynamic
+          :schema $ quote $ Map Tag Tag
         'style-pointer $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def style-pointer
             {} $ :cursor |pointer
           :examples $ []
-          :schema $ quote Dynamic
+          :schema $ quote $ Map Tag String
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.header
           :require
@@ -574,7 +574,7 @@
               :color :white
               :padding "|0 8px"
           :examples $ []
-          :schema $ quote Dynamic
+          :schema $ quote $ Map Tag respo.schema/CssValue
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.comp.profile
           :require
