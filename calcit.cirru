@@ -721,7 +721,7 @@
                 credentials $ decode-map-as raw $ Tuple String String
               let[] (username password) credentials $ Credentials :username username :password password
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Credentials)
+          :schema $ quote $ Fn Input (-> Credentials) (:generics Input)
         'decode-database $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-database (raw)
             let
@@ -750,7 +750,7 @@
                       MapEntryDecision :keep id $ normalize-message message
               decode-map-as normalized 'app.schema/Db
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Db)
+          :schema $ quote $ Fn Input (-> Db) (:generics Input)
           :tests $ []
             %{} 'TestEntry (:name |legacy-map-with-optional-chat-author)
               :code $ quote $ let
@@ -830,7 +830,7 @@
                 _ $ raise "|Unsupported operation"
               raise "|Expected operation enum"
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Op)
+          :schema $ quote $ Fn Input (-> Op) (:generics Input)
           :tests $ [] $ %{} 'TestEntry (:name |checked-chat-operation-roundtrip)
             :code $ quote $ let
                 typed $ Op :message/send "|hello 🌸"
@@ -869,7 +869,7 @@
           :code $ quote $ defn decode-router (raw)
             decode-map-as (normalize-router raw) 'app.schema/Router
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Router)
+          :schema $ quote $ Fn Input (-> Router) (:generics Input)
         'decode-store $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-store (raw)
             let
@@ -880,7 +880,7 @@
                   assoc :router $ normalize-optional-router-view $ .unwrap (get data :router)
               decode-map-as normalized 'app.schema/Store
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Store)
+          :schema $ quote $ Fn Input (-> Store) (:generics Input)
           :tests $ [] $ %{} 'TestEntry (:name |serialized-nominal-patch-keeps-chat-store)
             :code $ quote $ let
                 guest $ assoc session :id 7
@@ -1141,7 +1141,7 @@
         'on-exit! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-exit! ()
             .foldl @*tasks &unit $ fn (acc task)
-              hint-fn $ Fn Unit calcit.core/FfiTask $ -> Unit
+              hint-fn $ Fn Unit FfiTask $ -> Unit
               .cancel! task
             reset! *tasks $ []
             persist-db!
@@ -1297,7 +1297,7 @@
                       {}
               schema/Store :logged-in? (.some? maybe-user) :session session :reel-length (.len records) :user user-view :router route-view :count-sessions $ .len $ :sessions db
           :examples $ []
-          :schema $ quote $ Fn schema/Db schema/Session (List Dynamic) (-> schema/Store)
+          :schema $ quote $ Fn schema/Db schema/Session (List HistoryEntry) (-> schema/Store) (:generics HistoryEntry)
           :tests $ [] $ %{} 'TestEntry (:name |projection-never-exposes-account-passwords)
             :code $ quote $ let
                 user $ schema/User :id |u :name |Ada :nickname (Some |Ada) :avatar None :password |hash
