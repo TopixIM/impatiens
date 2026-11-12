@@ -12,7 +12,7 @@ https://github.com/Cumulo/calcium-workflow
 
 ### 构建与部署
 
-前后端请配套使用正式 Calcit 与 `@calcit/procs` 0.41.1，配合 caps 0.1.1、Node.js 24 和 Yarn 4.18.0。用 `caps --strict --ci` 与 `yarn install --immutable` 安装锁定的依赖。后端需准备匹配的 std 0.2.53、WSS 0.2.44 原生库，再以 `calcit --entry server` 启动。
+前后端请配套使用正式 Calcit 与 `@calcit/procs` 0.42.0，配合 caps 0.1.1、Node.js 24 和 Yarn 4.18.0。用 `caps --strict --ci` 与 `yarn install --immutable` 安装锁定的依赖。后端需准备匹配的 std 0.2.53、WSS 0.2.44 原生库，再以 `calcit --entry server` 启动。
 
 原部署工作流复制服务端文件，依赖安装和进程切换由服务器运维完成。发布前请为现有存档留存独立备份，并安排前后端同步切换及页面刷新。旧 Map 存档可经检查后读取，首次保存会写入具名格式。回滚旧程序时使用升级前的备份。存档中的未知字段或错误类型会拒绝读取，保留原文件。
 
