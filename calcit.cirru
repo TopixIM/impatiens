@@ -115,7 +115,7 @@
                 hud! |error error
             , &unit
           :examples $ []
-          :schema $ quote $ Fn Dynamic (-> Unit) (:features :js-ffi :state)
+          :schema $ quote $ Fn Raw (-> Unit) (:generics Raw) (:features :js-ffi :state)
         'reload! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn reload! ()
             if
