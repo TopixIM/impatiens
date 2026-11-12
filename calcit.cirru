@@ -715,6 +715,16 @@
             Db :sessions ({}) :users ({}) :messages $ {}
           :examples $ []
           :schema $ quote Db
+        'decode-chat-messages $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-chat-messages (raw)
+            filter-map-kv
+              decode-map-as raw $ Map String Dynamic
+              fn (id message)
+                MapEntryDecision :keep id $ normalize-message message
+          :examples $ []
+          :schema $ quote $ Fn Input
+            -> $ Map String ChatMessage
+            :generics Input
         'decode-credentials $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-credentials (raw)
             let
@@ -742,12 +752,7 @@
                     MapEntryDecision :keep id $ normalize-session value
                   assoc :users $ filter-map-kv users $ fn (id value)
                     MapEntryDecision :keep id $ normalize-user value
-                  assoc :messages $ filter-map-kv
-                    decode-map-as
-                      .unwrap $ get data :messages
-                      Map String Dynamic
-                    fn (id message)
-                      MapEntryDecision :keep id $ normalize-message message
+                  assoc :messages $ decode-chat-messages $ .unwrap (get data :messages)
               decode-map-as normalized 'app.schema/Db
           :examples $ []
           :schema $ quote $ Fn Input (-> Db) (:generics Input)
@@ -937,10 +942,11 @@
           :schema $ quote $ Fn Op (-> AnyEnum) (:open :reflect)
         'normalize-message $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-message (raw)
-            without-legacy-nil (data-map raw) :user-id
+            decode-map-as
+              without-legacy-nil (data-map raw) :user-id
+              , ChatMessage
           :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ Map Tag Dynamic
+          :schema $ quote $ Fn Input (-> ChatMessage) (:generics Input)
         'normalize-optional-router-view $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-optional-router-view (raw)
             if (nil? raw) None $ if (enum? raw)
@@ -951,8 +957,9 @@
                 _ $ raise |Invalid-optional-router
               Some $ normalize-router-view raw
           :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ Option $ Map Tag Dynamic
+          :schema $ quote $ Fn Input
+            -> $ Option RouterView
+            :generics Input
         'normalize-optional-user $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-optional-user (raw)
             if (nil? raw) None $ if (enum? raw)
@@ -983,18 +990,16 @@
                 users $ decode-map-as
                   .unwrap $ get payload :users
                   Map String Dynamic
-                messages $ decode-map-as
-                  .unwrap $ get payload :messages
-                  Map String Dynamic
+                messages $ decode-chat-messages $ .unwrap (get payload :messages)
                 normalized $ -> payload
                   assoc :users $ filter-map-kv users $ fn (id user)
-                    MapEntryDecision :keep id $ normalize-user user
-                  assoc :messages $ filter-map-kv messages $ fn (id message)
-                    MapEntryDecision :keep id $ normalize-message message
-              assoc data :data normalized
+                    MapEntryDecision :keep id $ decode-map-as (normalize-user user) UserView
+                  assoc :messages messages
+              decode-map-as
+                assoc data :data $ decode-map-as normalized ChatroomData
+                , RouterView
           :examples $ []
-          :schema $ quote $ Fn Dynamic
-            -> $ Map Tag Dynamic
+          :schema $ quote $ Fn Input (-> RouterView) (:generics Input)
         'normalize-session $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-session (raw)
             let
