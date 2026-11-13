@@ -752,7 +752,7 @@
                   assoc :sessions $ filter-map-kv sessions $ fn (id value)
                     MapEntryDecision :keep id $ normalize-session value
                   assoc :users $ filter-map-kv users $ fn (id value)
-                    MapEntryDecision :keep id $ decode-map-as (normalize-user value) User
+                    MapEntryDecision :keep id $ decode-user value
                   assoc :messages $ decode-chat-messages $ .unwrap (get data :messages)
               decode-map-as normalized 'app.schema/Db
           :examples $ []
@@ -915,9 +915,18 @@
               assert= before $ decode-store wire-before
               assert= after recovered
             :tags $ #{} :migration :unit
+        'decode-user $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-user (raw)
+            decode-map-as
+              -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
+              , User
+          :examples $ []
+          :schema $ quote $ Fn Input (-> User) (:generics Input)
         'decode-user-view $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-user-view (raw)
-            decode-map-as (normalize-user raw) UserView
+            decode-map-as
+              -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
+              , UserView
           :examples $ []
           :schema $ quote $ Fn Input (-> UserView) (:generics Input)
         'encode-op $ %{} 'CodeEntry
@@ -1020,13 +1029,6 @@
                 , Session
           :examples $ []
           :schema $ quote $ Fn Input (-> Session) (:generics Input)
-        'normalize-user $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-user (raw)
-            -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
-          :examples $ []
-          :schema $ quote $ Fn Input
-            -> $ Map Tag Dynamic
-            :generics Input
         'router $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def router
             Router :name :chatroom :title None :data nil :router nil
