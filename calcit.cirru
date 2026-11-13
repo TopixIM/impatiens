@@ -708,8 +708,9 @@
               decode-map-as (&struct:to-map raw) (Map Tag Dynamic)
               decode-map-as raw $ Map Tag Dynamic
           :examples $ []
-          :schema $ quote $ Fn Dynamic
+          :schema $ quote $ Fn Input
             -> $ Map Tag Dynamic
+            :generics Input
         'database $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def database
             Db :sessions ({}) :users ({}) :messages $ {}
@@ -868,8 +869,9 @@
                 _ $ raise |Invalid-optional-string
               Some $ decode-map-as raw 'String
           :examples $ []
-          :schema $ quote $ Fn Dynamic
+          :schema $ quote $ Fn Input
             -> $ Option String
+            :generics Input
         'decode-router $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-router (raw)
             decode-map-as (normalize-router raw) 'app.schema/Router
@@ -986,8 +988,9 @@
                 data-map raw
               , :title
           :examples $ []
-          :schema $ quote $ Fn Dynamic
+          :schema $ quote $ Fn Input
             -> $ Map Tag Dynamic
+            :generics Input
         'normalize-router-view $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-router-view (raw)
             let
@@ -1028,8 +1031,9 @@
           :code $ quote $ defn normalize-user (raw)
             -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
           :examples $ []
-          :schema $ quote $ Fn Dynamic
+          :schema $ quote $ Fn Input
             -> $ Map Tag Dynamic
+            :generics Input
         'router $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def router
             Router :name :chatroom :title None :data nil :router nil
