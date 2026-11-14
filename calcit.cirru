@@ -339,9 +339,6 @@
                           :text $ :text message
                     {}
                     fn (info d!)
-                      hint-fn $ Fn (Map Tag Dynamic)
-                        Fn app.schema/ClientOp $ -> Unit
-                        -> Unit
                       d! $ app.schema/Op :session/remove-message $ decode-map-as
                         .unwrap $ get info :id
                         , 'String
@@ -752,7 +749,7 @@
                   assoc :sessions $ filter-map-kv sessions $ fn (id value)
                     MapEntryDecision :keep id $ normalize-session value
                   assoc :users $ filter-map-kv users $ fn (id value)
-                    MapEntryDecision :keep id $ decode-map-as (normalize-user value) User
+                    MapEntryDecision :keep id $ decode-user value
                   assoc :messages $ decode-chat-messages $ .unwrap (get data :messages)
               decode-map-as normalized 'app.schema/Db
           :examples $ []
@@ -874,7 +871,11 @@
             :generics Input
         'decode-router $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-router (raw)
-            decode-map-as (normalize-router raw) 'app.schema/Router
+            let
+                data $ merge
+                  {} (:name :chatroom) (:data nil) (:router nil)
+                  data-map raw
+              decode-map-as (without-legacy-nil data :title) 'app.schema/Router
           :examples $ []
           :schema $ quote $ Fn Input (-> Router) (:generics Input)
         'decode-store $ %{} 'CodeEntry (:doc |)
@@ -911,9 +912,18 @@
               assert= before $ decode-store wire-before
               assert= after recovered
             :tags $ #{} :migration :unit
+        'decode-user $ %{} 'CodeEntry (:doc |)
+          :code $ quote $ defn decode-user (raw)
+            decode-map-as
+              -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
+              , User
+          :examples $ []
+          :schema $ quote $ Fn Input (-> User) (:generics Input)
         'decode-user-view $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn decode-user-view (raw)
-            decode-map-as (normalize-user raw) UserView
+            decode-map-as
+              -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
+              , UserView
           :examples $ []
           :schema $ quote $ Fn Input (-> UserView) (:generics Input)
         'encode-op $ %{} 'CodeEntry
@@ -980,17 +990,6 @@
           :schema $ quote $ Fn Input
             -> $ Option UserView
             :generics Input
-        'normalize-router $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-router (raw)
-            without-legacy-nil
-              merge
-                {} (:name :chatroom) (:data nil) (:router nil)
-                data-map raw
-              , :title
-          :examples $ []
-          :schema $ quote $ Fn Input
-            -> $ Map Tag Dynamic
-            :generics Input
         'normalize-router-view $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn normalize-router-view (raw)
             let
@@ -1027,13 +1026,6 @@
                 , Session
           :examples $ []
           :schema $ quote $ Fn Input (-> Session) (:generics Input)
-        'normalize-user $ %{} 'CodeEntry (:doc |)
-          :code $ quote $ defn normalize-user (raw)
-            -> (data-map raw) (without-legacy-nil :nickname) (without-legacy-nil :avatar)
-          :examples $ []
-          :schema $ quote $ Fn Input
-            -> $ Map Tag Dynamic
-            :generics Input
         'router $ %{} 'CodeEntry (:doc |)
           :code $ quote $ def router
             Router :name :chatroom :title None :data nil :router nil
