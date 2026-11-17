@@ -134,7 +134,7 @@
               fn () $ comp-container @*drafts @*store
               , dispatch!
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
         'simulate-login! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn simulate-login! ()
             match
@@ -148,7 +148,7 @@
                     host/console-error! $ str |Invalid-saved-login: error
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit)
+          :schema $ quote $ Fn (-> Unit) (:features :state)
       :ns $ %{} 'NsEntry (:doc |)
         :code $ quote $ ns app.client
           :require
@@ -350,7 +350,7 @@
                     Some $ comp-inspect |Router (:user store) style-debugger
                     , None
           :examples $ []
-          :schema $ quote $ Fn app.schema/Drafts (Option app.schema/Store) (-> respo.schema/Component)
+          :schema $ quote $ Fn app.schema/Drafts (Option app.schema/Store) (-> respo.schema/Component) (:features :state)
         'comp-dev-reel $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defcomp comp-dev-reel (size)
             div
@@ -511,7 +511,7 @@
                   :style $ merge style/button
                   :on-click $ on-submit (:username state) (:password state) false
           :examples $ []
-          :schema $ quote $ Fn app.schema/LoginState (-> respo.schema/Component)
+          :schema $ quote $ Fn app.schema/LoginState (-> respo.schema/Component) (:features :state)
         'on-submit $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn on-submit (username password signup?)
             fn (event dispatch!)
