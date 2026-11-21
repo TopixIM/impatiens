@@ -45,7 +45,7 @@
                 :on-data on-server-data
             , &unit
           :examples $ []
-          :schema $ quote $ Fn (-> Unit) (:features :state)
+          :schema $ quote $ Fn (-> Unit) (:features :io :state)
         'connection-url $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn connection-url ()
             let
@@ -72,7 +72,7 @@
                   _ $ ws-send! $ schema/encode-op remote
             , &unit
           :examples $ []
-          :schema $ quote $ Fn *dispatch-op (-> Unit) (:features :state)
+          :schema $ quote $ Fn *dispatch-op (-> Unit) (:features :io :state)
         'main! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn main! ()
             println "|Running mode:" $ if config/dev? |dev |release
