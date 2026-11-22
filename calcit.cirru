@@ -38,11 +38,12 @@
           :schema $ quote $ Ref (Option Dynamic)
         'connect! $ %{} 'CodeEntry (:doc |)
           :code $ quote $ defn connect! () (reset! *wire-store None) (reset! *store None)
-            ws-connect! (connection-url)
-              {}
-                :on-open $ fn (event) (simulate-login!)
-                :on-close $ fn (event) (reset! *wire-store None) (reset! *store None) (host/console-error! |Lost-connection)
-                :on-data on-server-data
+            let
+                opened $ fn (event) (simulate-login!) &unit
+                closed $ fn (event) (reset! *wire-store None) (reset! *store None) (host/console-error! |Lost-connection) &unit
+              ws-edn.client/ws-connect-typed! (connection-url)
+                ws-edn.client/ClientConfig :retry-base-ms None :retry-max-ms None :retry-jitter None :heartbeat-timeout-ms None :class-mapper $ {}
+                ws-edn.client/ClientCallbacks :on-open (Some opened) :on-close (Some closed) :on-error None :on-data $ Some on-server-data
             , &unit
           :examples $ []
           :schema $ quote $ Fn (-> Unit) (:features :io :state)
