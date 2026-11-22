@@ -12,11 +12,11 @@ https://github.com/Cumulo/calcium-workflow
 
 ### 构建与部署
 
-前后端请配套使用正式 Calcit 与 `@calcit/procs` 0.44.0，配合 caps 0.1.1、Node.js 24 和 Yarn 4.18.0。用 `caps --strict --ci` 与 `yarn install --immutable` 安装锁定的依赖。后端需准备匹配的 std 0.2.58、WSS 0.2.46 原生库，再以 `calcit --entry server` 启动。 共享应用依赖已同步到兼容 Calcit 0.44 的正式版本，包括 Cumulo Reel 0.3.8、WS-EDN 0.2.6 和 Recollect 0.3.10。
+前后端请配套使用正式 Calcit 与 `@calcit/procs` 0.44.0，配合 caps 0.1.1、Node.js 24 和 Yarn 4.18.0。用 `caps --strict --ci` 与 `yarn install --immutable` 安装锁定的依赖。后端需准备匹配的 std 0.2.58、WSS 0.2.46 原生库，再以 `calcit --entry server` 启动。 共享应用依赖已同步到兼容 Calcit 0.44 的正式版本，包括 Cumulo Reel 0.3.9、WS-EDN 0.2.7 和 Recollect 0.3.10。
 
 原部署工作流复制服务端文件，依赖安装和进程切换由服务器运维完成。发布前请为现有存档留存独立备份，并安排前后端同步切换及页面刷新。旧 Map 存档可经检查后读取，首次保存会写入具名格式。回滚旧程序时使用升级前的备份。存档中的未知字段或错误类型会拒绝读取，保留原文件。
 
-原聊天协议沿用匿名操作的 Cirru EDN 编码。浏览器内部用具名 union 分开本地草稿和服务端操作。登录信息沿用 `impatiens` 键，旧 `workflow-storage` 键继续保留。界面只要求用户名，用户列表只传递 `UserView`。
+客户端连接使用按事件区分的类型化回调，原聊天协议沿用匿名操作的 Cirru EDN 编码。浏览器内部用具名 union 分开本地草稿和服务端操作。登录信息沿用 `impatiens` 键，旧 `workflow-storage` 键继续保留。界面只要求用户名，用户列表只传递 `UserView`。
 
 前端 `dist/` 上传到 COS，生产 CDN 路径为 `https://cos-sh.tiye.me/TopixIM/impatiens/`。同仓库 PR 使用 `pr/<编号>/<run-id>/<attempt>/` 隔离预览，并使用 COS Action 内置校验。原 web rsync 路径及 `/servers/paste-sharing/` 服务端路径继续沿用，`dist-server/` 单独部署。
 
